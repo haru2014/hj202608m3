@@ -61,6 +61,20 @@ class handler(BaseHTTPRequestHandler):
 
         api_key = os.environ.get("OPENAI_API_KEY", "").strip()
 
+        # 로컬 개발 환경에서 .env 파일이 있을 경우 자동 로드
+        if not api_key:
+            env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+            if os.path.exists(env_path):
+                try:
+                    with open(env_path, 'r', encoding='utf-8') as f:
+                        for line in f:
+                            line = line.strip()
+                            if line.startswith('OPENAI_API_KEY='):
+                                api_key = line.split('=', 1)[1].strip().strip('"\'')
+                                break
+                except Exception:
+                    pass
+
         # If API key is provided, use OpenAI GPT-4o-mini Vision
         if api_key and OpenAI is not None:
             try:
