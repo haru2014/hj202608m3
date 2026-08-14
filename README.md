@@ -132,9 +132,13 @@ git push origin main
 
 ### 3) 환경 변수(Environment Variables) 설정
 1. Vercel 프로젝트 설정의 **Settings** $\rightarrow$ **Environment Variables** 메뉴로 이동합니다.
-2. 아래 환경 변수를 추가합니다:
-   - **Key**: `OPENAI_API_KEY`
-   - **Value**: `sk-proj-본인의_OpenAI_API_키`
+2. 아래 환경 변수 중 하나를 추가합니다:
+   - **Google Gemini 사용 시 (무료 티어 제공 / 추천)**:
+     - **Key**: `GEMINI_API_KEY`
+     - **Value**: `AIzaSy...` (Google AI Studio에서 무료 발급)
+   - **OpenAI 사용 시**:
+     - **Key**: `OPENAI_API_KEY`
+     - **Value**: `sk-proj-...`
 3. **Save** 후 **Redeploy**를 진행합니다.
 
 > 🔒 **보안 주의사항**: API 키는 절대로 GitHub 저장소의 공개 코드나 `README.md`에 직접 커밋하지 않으며, 오직 Vercel 환경 변수로만 안전하게 관리합니다.

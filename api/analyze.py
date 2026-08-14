@@ -59,74 +59,130 @@ class handler(BaseHTTPRequestHandler):
         if not image_data.startswith('data:image/') and not image_data.startswith('http'):
             image_data = f"data:image/jpeg;base64,{image_data}"
 
-        api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+        gemini_api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+        openai_api_key = os.environ.get("OPENAI_API_KEY", "").strip()
 
         # 로컬 개발 환경에서 .env 파일이 있을 경우 자동 로드
-        if not api_key:
+        if not gemini_api_key or not openai_api_key:
             env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
             if os.path.exists(env_path):
                 try:
                     with open(env_path, 'r', encoding='utf-8') as f:
                         for line in f:
                             line = line.strip()
-                            if line.startswith('OPENAI_API_KEY='):
-                                api_key = line.split('=', 1)[1].strip().strip('"\'')
-                                break
+                            if line.startswith('GEMINI_API_KEY=') and not gemini_api_key:
+                                gemini_api_key = line.split('=', 1)[1].strip().strip('"\'')
+                            elif line.startswith('OPENAI_API_KEY=') and not openai_api_key:
+                                openai_api_key = line.split('=', 1)[1].strip().strip('"\'')
                 except Exception:
                     pass
 
-        # If API key is provided, use OpenAI GPT-4o-mini Vision
-        if api_key and OpenAI is not None:
+        system_instruction = (
+            "당신은 전 세계 최고의 반려견 행동학(Canine Ethology) 및 동물심리 전문가입니다. "
+            "제공된 반려견의 사진과 추가 정보(품종, 나이, 상황)를 관찰하여 현재의 감정 상태를 다각도로 분석하고, "
+            "보호자가 즉시 실천할 수 있는 긍정적인 행동 가이드와 주의사항을 친절하고 신뢰감 있는 어조로 제공하세요.\n\n"
+            "반드시 아래 JSON 형식에 맞추어 순수 JSON만 응답하세요:\n"
+            "{\n"
+            '  "emotion": "행복 | 편안함 | 불안 | 경계 | 두려움 | 놀이 중 택1",\n'
+            '  "emotion_en": "Happy | Relaxed | Anxious | Alert | Fear | Playful 중 택1",\n'
+            '  "emoji": "😊 | 😌 | 😟 | 😠 | 😨 | 🎾",\n'
+            '  "confidence": 85,\n'
+            '  "summary": "반려견의 전체적인 상태를 요약한 1~2문장의 설명",\n'
+            '  "cues": [\n'
+            '    {"part": "눈", "observation": "관찰된 특징"},\n'
+            '    {"part": "귀", "observation": "관찰된 특징"},\n'
+            '    {"part": "입 및 혀", "observation": "관찰된 특징"},\n'
+            '    {"part": "몸 및 자세", "observation": "관찰된 특징"}\n'
+            '  ],\n'
+            '  "recommendations": [\n'
+            '    "보호자가 취해야 할 권장 행동 1",\n'
+            '    "보호자가 취해야 할 권장 행동 2",\n'
+            '    "보호자가 취해야 할 권장 행동 3"\n'
+            '  ],\n'
+            '  "precautions": [\n'
+            '    "주의해야 할 점 또는 스트레스 예방 팁 1",\n'
+            '    "주의해야 할 점 또는 스트레스 예방 팁 2"\n'
+            '  ]\n'
+            "}"
+        )
+
+        user_prompt_text = (
+            f"반려견 정보:\n- 품종: {breed}\n- 나이: {age}\n- 현재 상황: {situation}\n\n"
+            "이 사진의 눈, 귀, 입, 자세 등 신체 언어를 관찰하여 현재 감정과 보호자 가이드를 JSON으로 분석해주세요."
+        )
+
+        # 1. Google Gemini API 사용 (GEMINI_API_KEY가 있는 경우)
+        if gemini_api_key:
             try:
-                client = OpenAI(api_key=api_key)
+                import urllib.request
                 
-                system_prompt = (
-                    "당신은 전 세계 최고의 반려견 행동학(Canine Ethology) 및 동물심리 전문가입니다. "
-                    "제공된 반려견의 사진과 추가 정보(품종, 나이, 상황)를 관찰하여 현재의 감정 상태를 다각도로 분석하고, "
-                    "보호자가 즉시 실천할 수 있는 긍정적인 행동 가이드와 주의사항을 친절하고 신뢰감 있는 어조로 제공하세요.\n\n"
-                    "반드시 아래 JSON 형식에 맞추어 마크다운이나 추가 설명 없이 순수 JSON만 응답하세요:\n"
-                    "{\n"
-                    '  "emotion": "행복 | 편안함 | 불안 | 경계 | 두려움 | 놀이 중 택1",\n'
-                    '  "emotion_en": "Happy | Relaxed | Anxious | Alert | Fear | Playful 중 택1",\n'
-                    '  "emoji": "😊 | 😌 | 😟 | 😠 | 😨 | 🎾",\n'
-                    '  "confidence": 85,\n'
-                    '  "summary": "반려견의 전체적인 상태를 요약한 1~2문장의 설명",\n'
-                    '  "cues": [\n'
-                    '    {"part": "눈", "observation": "관찰된 특징"},\n'
-                    '    {"part": "귀", "observation": "관찰된 특징"},\n'
-                    '    {"part": "입 및 혀", "observation": "관찰된 특징"},\n'
-                    '    {"part": "몸 및 자세", "observation": "관찰된 특징"}\n'
-                    '  ],\n'
-                    '  "recommendations": [\n'
-                    '    "보호자가 취해야 할 권장 행동 1",\n'
-                    '    "보호자가 취해야 할 권장 행동 2",\n'
-                    '    "보호자가 취해야 할 권장 행동 3"\n'
-                    '  ],\n'
-                    '  "precautions": [\n'
-                    '    "주의해야 할 점 또는 스트레스 예방 팁 1",\n'
-                    '    "주의해야 할 점 또는 스트레스 예방 팁 2"\n'
-                    '  ]\n'
-                    "}"
+                # Base64 데이터 정제
+                raw_b64 = image_data
+                mime_type = "image/jpeg"
+                if "base64," in image_data:
+                    header, raw_b64 = image_data.split("base64,", 1)
+                    if "image/png" in header:
+                        mime_type = "image/png"
+                    elif "image/webp" in header:
+                        mime_type = "image/webp"
+
+                gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_api_key}"
+                
+                payload = {
+                    "contents": [
+                        {
+                            "parts": [
+                                {"text": f"{system_instruction}\n\n{user_prompt_text}"},
+                                {
+                                    "inline_data": {
+                                        "mime_type": mime_type,
+                                        "data": raw_b64.strip()
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "generationConfig": {
+                        "response_mime_type": "application/json",
+                        "temperature": 0.2
+                    }
+                }
+
+                req = urllib.request.Request(
+                    gemini_url,
+                    data=json.dumps(payload).encode('utf-8'),
+                    headers={"Content-Type": "application/json"}
                 )
 
+                with urllib.request.urlopen(req, timeout=25) as res:
+                    gemini_resp = json.loads(res.read().decode('utf-8'))
+                    text_content = gemini_resp['candidates'][0]['content']['parts'][0]['text']
+                    result_json = json.loads(text_content)
+                    result_json["source"] = "Google Gemini 1.5 Flash Vision"
+                    self._send_json_success(result_json)
+                    return
+
+            except Exception as e:
+                # Gemini 실패 시 OpenAI 또는 휴리스틱으로 폴백
+                if not openai_api_key:
+                    fallback_result = self._generate_heuristic_response(breed, age, situation, error_msg=f"Gemini API: {str(e)}")
+                    self._send_json_success(fallback_result)
+                    return
+
+        # 2. OpenAI API 사용 (OPENAI_API_KEY가 있는 경우)
+        if openai_api_key and OpenAI is not None:
+            try:
+                client = OpenAI(api_key=openai_api_key)
+
                 user_content = [
-                    {
-                        "type": "text",
-                        "text": f"반려견 정보:\n- 품종: {breed}\n- 나이: {age}\n- 현재 상황: {situation}\n이 사진의 표정과 신체 언어를 정밀 분석하여 감정 상태를 진단해주세요."
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": image_data,
-                            "detail": "low"
-                        }
-                    }
+                    {"type": "text", "text": user_prompt_text},
+                    {"type": "image_url", "image_url": {"url": image_data, "detail": "low"}}
                 ]
 
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[
-                        {"role": "system", "content": system_prompt},
+                        {"role": "system", "content": system_instruction},
                         {"role": "user", "content": user_content}
                     ],
                     max_tokens=800,
@@ -137,19 +193,17 @@ class handler(BaseHTTPRequestHandler):
                 content = response.choices[0].message.content
                 result_json = json.loads(content)
                 result_json["source"] = "OpenAI GPT-4o-mini Vision"
-
                 self._send_json_success(result_json)
                 return
 
             except Exception as e:
-                # If OpenAI API fails (e.g. quota, network), fallback to intelligent rule-based response with notice
                 fallback_result = self._generate_heuristic_response(breed, age, situation, error_msg=str(e))
                 self._send_json_success(fallback_result)
                 return
-        else:
-            # When OPENAI_API_KEY is not set (e.g., local demo or initial test)
-            demo_result = self._generate_heuristic_response(breed, age, situation, is_demo=True)
-            self._send_json_success(demo_result)
+        
+        # 3. API 키가 설정되지 않은 경우 (체험 데모 모드)
+        demo_result = self._generate_heuristic_response(breed, age, situation, is_demo=True)
+        self._send_json_success(demo_result)
 
     def _generate_heuristic_response(self, breed, age, situation, is_demo=False, error_msg=None):
         """Intelligent fallback/demo analyzer when API key is not configured or during offline testing"""
