@@ -7,7 +7,7 @@ from http.server import BaseHTTPRequestHandler
 
 # OpenAI API SDK (설치되지 않았을 경우를 대비한 예외 처리 - Lazy Loading 방식)
 try:
-    from openai import OpenAI
+    from openai import OpenAI  # type: ignore
 except ImportError:
     OpenAI = None
 

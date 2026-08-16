@@ -73,17 +73,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // 저장된 테마가 없으면 기본값은 'light'
     const savedTheme = localStorage.getItem('pawemotion_theme') || 'light';
     // <html> 태그에 data-theme 속성을 주어 CSS에서 적절한 색상 변수를 가져다 쓰도록 합니다.
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.documentElement.dataset.theme = savedTheme;
     // 현재 테마에 맞춰 토글 버튼 아이콘 수정
     themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
   };
 
   // 테마 토글 버튼 클릭 이벤트 핸들러
   themeToggleBtn.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const currentTheme = document.documentElement.dataset.theme;
     // 현재 테마와 반대 테마로 스위칭
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
+    document.documentElement.dataset.theme = newTheme;
     // 로컬 스토리지에 새 테마 저장 (페이지 새로고침 시에도 유지되도록 함)
     localStorage.setItem('pawemotion_theme', newTheme);
     themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 각각의 샘플 버튼을 누르면 해당 강아지의 사진 및 부가 정보가 자동으로 입력창에 자동 폼 채우기(Auto-fill)됩니다.
   sampleBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      const type = btn.getAttribute('data-sample');
+      const type = btn.dataset.sample;
       const preset = samplePresets[type];
       if (!preset) return;
 
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 상황 해시태그 칩(Chip)을 누르면 간편하게 상황 설명 텍스트 인풋창에 문자열이 즉각 바인딩됩니다.
   chipBtns.forEach(chip => {
     chip.addEventListener('click', () => {
-      dogSituationInput.value = chip.getAttribute('data-situation');
+      dogSituationInput.value = chip.dataset.situation;
       chipBtns.forEach(c => c.classList.remove('active'));
       chip.classList.add('active'); // 선택된 칩에 시각적인 효과 부여
     });
@@ -616,7 +616,7 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
     document.querySelectorAll('.history-delete-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation(); // 카드 자체 클릭에 대한 다른 전파를 방어
-        const id = parseInt(btn.getAttribute('data-id'), 10);
+        const id = Number.parseInt(btn.dataset.id, 10);
         // 해당하는 ID의 아이템을 제외한 배열로 재구성
         state.history = state.history.filter(h => h.id !== id);
         localStorage.setItem('pawemotion_history', JSON.stringify(state.history));
@@ -649,10 +649,10 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
       filterTabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active'); // 선택된 탭 활성화 클래스 지정
 
-      const filter = tab.getAttribute('data-filter'); // 필터 기준값 추출 (예: 'happy', 'all')
+      const filter = tab.dataset.filter; // 필터 기준값 추출 (예: 'happy', 'all')
 
       guideCards.forEach(card => {
-        const cat = card.getAttribute('data-category'); // 도감 카드의 고유 카테고리값
+        const cat = card.dataset.category; // 도감 카드의 고유 카테고리값
         // 전체보기('all') 이거나 카드가 탭 필터 종류와 일치하면 노출, 아닐 경우 숨김(display: none)
         if (filter === 'all' || cat === filter) {
           card.style.display = 'flex';
@@ -702,16 +702,17 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
     }, 3500);
   }
 
-  // ================= 16. 보안 조치: HTML 문자열 이스케이프 (Security XSS Guard) =================
-  // 혹여나 외부 데이터나 유저 인풋값에 악성 script 태그가 포함되어 화면을 오염시키는 것(Cross-Site Scripting)을 원천 방지
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 });
+
+// ================= 16. 보안 조치: HTML 문자열 이스케이프 (Security XSS Guard) =================
+// 혹여나 외부 데이터나 유저 인풋값에 악성 script 태그가 포함되어 화면을 오염시키는 것(Cross-Site Scripting)을 원천 방지
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
 
