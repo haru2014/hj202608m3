@@ -13,6 +13,8 @@ except ImportError:
 
 # 공통 MIME 타입 및 미세 바디랭귀지 특징 카테고리 정의 (리터럴 중복 방지 linter 준수)
 JSON_CONTENT_TYPE = 'application/json; charset=utf-8'
+TEXT_PLAIN_CONTENT_TYPE = 'text/plain; charset=utf-8'
+HTML_CONTENT_TYPE = 'text/html; charset=utf-8'
 CUE_EYE = '눈'
 CUE_EAR = '귀'
 CUE_MOUTH = '입 및 혀'
@@ -45,6 +47,31 @@ class handler(BaseHTTPRequestHandler):
         self._send_cors_headers() # CORS 헤더 적용
         self.end_headers() # 응답 헤더 작성 완료
 
+    # 정적 파일 경로 및 Content-Type 결정 헬퍼 메서드 (인지 복잡도 감소용)
+    def _resolve_static_file(self, clean_path, base_dir):
+        if clean_path in ('/', '/index.html'):
+            return os.path.join(base_dir, 'index.html'), HTML_CONTENT_TYPE
+
+        rel_path = clean_path.lstrip('/')
+        target_file = os.path.abspath(os.path.join(base_dir, rel_path))
+
+        # 보안 강화: 상위 디렉터리 경로 탐색 공격(Path Traversal) 및 .env 등 민감 파일 접근 차단
+        if not target_file.startswith(base_dir) or os.path.basename(target_file).startswith('.env'):
+            return None, None
+
+        ext_to_mime = {
+            '.css': 'text/css; charset=utf-8',
+            '.js': 'application/javascript; charset=utf-8',
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.png': 'image/png',
+            '.webp': 'image/webp',
+            '.json': JSON_CONTENT_TYPE
+        }
+        _, ext = os.path.splitext(clean_path)
+        content_type = ext_to_mime.get(ext.lower(), TEXT_PLAIN_CONTENT_TYPE)
+        return target_file, content_type
+
     # GET 요청 처리 (정적 웹페이지 서빙 및 API 상태 확인용)
     def do_GET(self):
         clean_path = self.path.split('?')[0]
@@ -64,39 +91,16 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(response_data, ensure_ascii=False).encode('utf-8'))
             return
 
-        # 정적 파일(index.html, CSS, JS, 이미지 등) 서빙 처리
         base_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        target_file, content_type = self._resolve_static_file(clean_path, base_dir)
 
-        if clean_path in ('/', '/index.html'):
-            target_file = os.path.join(base_dir, 'index.html')
-            content_type = 'text/html; charset=utf-8'
-        else:
-            rel_path = clean_path.lstrip('/')
-            target_file = os.path.abspath(os.path.join(base_dir, rel_path))
-
-            # 보안 강화: 상위 디렉터리 경로 탐색 공격(Path Traversal) 및 .env 등 민감 파일 접근 차단
-            if not target_file.startswith(base_dir) or os.path.basename(target_file).startswith('.env'):
-                self.send_response(403)
-                self._send_cors_headers()
-                self.send_header('Content-Type', 'text/plain; charset=utf-8')
-                self.end_headers()
-                self.wfile.write(b"403 Forbidden")
-                return
-
-            if clean_path.endswith('.css'):
-                content_type = 'text/css; charset=utf-8'
-            elif clean_path.endswith('.js'):
-                content_type = 'application/javascript; charset=utf-8'
-            elif clean_path.endswith(('.jpg', '.jpeg')):
-                content_type = 'image/jpeg'
-            elif clean_path.endswith('.png'):
-                content_type = 'image/png'
-            elif clean_path.endswith('.webp'):
-                content_type = 'image/webp'
-            elif clean_path.endswith('.json'):
-                content_type = 'application/json; charset=utf-8'
-            else:
-                content_type = 'text/plain; charset=utf-8'
+        if not target_file:
+            self.send_response(403)
+            self._send_cors_headers()
+            self.send_header('Content-Type', TEXT_PLAIN_CONTENT_TYPE)
+            self.end_headers()
+            self.wfile.write(b"403 Forbidden")
+            return
 
         # 정적 파일이 존재할 경우 파일 내용 전송
         if os.path.isfile(target_file):
@@ -116,7 +120,7 @@ class handler(BaseHTTPRequestHandler):
         # 파일이 없을 경우 404 반환
         self.send_response(404)
         self._send_cors_headers()
-        self.send_header('Content-Type', 'text/plain; charset=utf-8')
+        self.send_header('Content-Type', TEXT_PLAIN_CONTENT_TYPE)
         self.end_headers()
         self.wfile.write(b"404 Not Found")
 
