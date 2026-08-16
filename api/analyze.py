@@ -65,14 +65,23 @@ class handler(BaseHTTPRequestHandler):
             return
 
         # 정적 파일(index.html, CSS, JS, 이미지 등) 서빙 처리
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        base_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
         if clean_path in ('/', '/index.html'):
             target_file = os.path.join(base_dir, 'index.html')
             content_type = 'text/html; charset=utf-8'
         else:
             rel_path = clean_path.lstrip('/')
-            target_file = os.path.join(base_dir, rel_path)
+            target_file = os.path.abspath(os.path.join(base_dir, rel_path))
+
+            # 보안 강화: 상위 디렉터리 경로 탐색 공격(Path Traversal) 및 .env 등 민감 파일 접근 차단
+            if not target_file.startswith(base_dir) or os.path.basename(target_file).startswith('.env'):
+                self.send_response(403)
+                self._send_cors_headers()
+                self.send_header('Content-Type', 'text/plain; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(b"403 Forbidden")
+                return
 
             if clean_path.endswith('.css'):
                 content_type = 'text/css; charset=utf-8'
@@ -285,10 +294,14 @@ class handler(BaseHTTPRequestHandler):
     # Gemini API 호출용 내부 헬퍼 메서드
     def _call_gemini_api(self, gemini_api_key, image_data, system_instruction, user_prompt_text):
         import urllib.request
-        
+        import re
+
         mime_type, raw_b64 = self._get_mime_and_base64(image_data)
-        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_api_key}"
-        
+
+        # 최신 활성 모델 목록 (gemini-3.5-flash, gemini-2.5-flash-lite, gemini-flash-latest)
+        models_to_try = ["gemini-3.5-flash", "gemini-2.5-flash-lite", "gemini-flash-latest"]
+        last_err = None
+
         payload = {
             "contents": [
                 {
@@ -309,18 +322,29 @@ class handler(BaseHTTPRequestHandler):
             }
         }
 
-        req = urllib.request.Request(
-            gemini_url,
-            data=json.dumps(payload).encode('utf-8'),
-            headers={"Content-Type": "application/json"}
-        )
+        for model_name in models_to_try:
+            gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_api_key}"
+            req = urllib.request.Request(
+                gemini_url,
+                data=json.dumps(payload).encode('utf-8'),
+                headers={"Content-Type": "application/json"}
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=25) as res:
+                    gemini_resp = json.loads(res.read().decode('utf-8'))
+                    text_content = gemini_resp['candidates'][0]['content']['parts'][0]['text'].strip()
+                    # 마크다운 코드블록 제거 처리
+                    if text_content.startswith('```'):
+                        text_content = re.sub(r'^```[a-zA-Z]*\n', '', text_content)
+                        text_content = re.sub(r'\n```$', '', text_content).strip()
+                    result_json = json.loads(text_content)
+                    result_json["source"] = f"Google Gemini ({model_name}) Vision AI"
+                    return result_json
+            except Exception as e:
+                last_err = e
+                continue
 
-        with urllib.request.urlopen(req, timeout=25) as res:
-            gemini_resp = json.loads(res.read().decode('utf-8'))
-            text_content = gemini_resp['candidates'][0]['content']['parts'][0]['text']
-            result_json = json.loads(text_content)
-            result_json["source"] = "Google Gemini 1.5 Flash Vision"
-            return result_json
+        raise last_err or Exception("All Gemini models failed")
 
     # OpenAI API 호출용 내부 헬퍼 메서드
     def _call_openai_api(self, openai_api_key, image_data, system_instruction, user_prompt_text):
