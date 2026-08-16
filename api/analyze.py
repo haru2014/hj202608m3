@@ -353,9 +353,32 @@ class handler(BaseHTTPRequestHandler):
         
         # 상황(Situation) 텍스트를 모두 소문자로 변환하여 매칭 확률을 높임
         situation_lower = situation.lower()
-        
+
+        # 0) 화남, 으르렁, 이빨, 공격, 경계 등 분노/경계 신호인 경우 -> '경계(Alert)' 상태로 판정
+        if any(w in situation_lower for w in ['화남', '화', '으르렁', '이빨', '경계', '공격', '물기', '위협', '짖음', '성남']):
+            emotion = "경계"
+            emotion_en = "Alert"
+            emoji = "😠"
+            confidence = 93
+            summary = f"{breed} 친구는 현재 강한 경계심과 방어적 위협 신호(으르렁/이빨 노출 등)를 보이고 있는 상태입니다."
+            cues = [
+                {"part": CUE_EYE, "observation": "시선이 매섭게 고정되어 있고 동공이 확장된 긴장 상태"},
+                {"part": CUE_EAR, "observation": "앞으로 꼿꼿이 세워지거나 뒤로 젖혀져 극도의 긴장감 표출"},
+                {"part": CUE_MOUTH, "observation": "입술을 말아 올려 이빨을 드러내고 낮게 으르렁거리는 경고 신호"},
+                {"part": CUE_BODY, "observation": "체중을 앞으로 싣거나 굳어 있어 언제든 반응할 수 있는 공격/방어 태세"}
+            ]
+            recs = [
+                "즉시 시선 접촉을 피하고, 반려견에게 충분한 안전거리(최소 2~3미터)를 내어주세요.",
+                "큰 소리를 내거나 갑작스러운 손동작을 멈추고 제자리에서 차분하게 기다리세요.",
+                "자극을 주는 대상(낯선 사람, 물건, 다른 동물)을 반려견의 시야에서 치워주세요."
+            ]
+            precautions = [
+                "화가 나 있을 때 억지로 다가가거나 만지려고 하면 물림 사고로 이어질 수 있으니 절대 손을 뻗지 마세요.",
+                "다그치거나 혼내면 공격성이 더욱 심화될 수 있으므로 조용히 환경을 진정시켜야 합니다."
+            ]
+
         # 1) 산책, 놀이, 간식 등의 쾌활한 단어가 들어간 상황인 경우 -> '놀이(Playful)' 상태로 판정
-        if any(w in situation_lower for w in ['산책', '놀이', '간식', '공놀이', '달리기']):
+        elif any(w in situation_lower for w in ['산책', '놀이', '간식', '공놀이', '달리기']):
             emotion = "놀이"
             emotion_en = "Playful"
             emoji = "🎾"
