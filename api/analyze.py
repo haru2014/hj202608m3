@@ -149,38 +149,44 @@ class handler(BaseHTTPRequestHandler):
 
         # AI 모델(Gemini, OpenAI)에 부여할 시스템 명령어(역할 정의 및 응답 포맷 안내)
         system_instruction = (
-            "당신은 전 세계 최고의 반려견 행동학(Canine Ethology) 및 동물심리 전문가입니다. "
-            "제공된 반려견의 사진과 추가 정보(품종, 나이, 상황)를 관찰하여 현재의 감정 상태를 다각도로 분석하고, "
-            "보호자가 즉시 실천할 수 있는 긍정적인 행동 가이드와 주의사항을 친절하고 신뢰감 있는 어조로 제공하세요.\n\n"
-            "반드시 아래 JSON 형식에 맞추어 순수 JSON만 응답하세요:\n"
+            "당신은 세계적인 반려견 행동학(Canine Ethology) 및 동물심리 분석 전문가입니다. "
+            "반드시 텍스트 설명보다 [제공된 사진 속 반려견의 실제 시각적 표정과 신체 언어]를 최우선 기준으로 정밀 판별하세요.\n\n"
+            "핵심 관찰 기준:\n"
+            "1. 눈(Eyes): 흰자위 노출(고래 눈, Whale eye), 동공 크기, 부드러운 눈매 vs 굳은 눈매, 시선 방향\n"
+            "2. 귀(Ears): 뒤로 젖혀짐(경계/불안/복종), 쫑긋 앞으로 향함(집중/놀이), 힘이 빠진 중립(편안함)\n"
+            "3. 입 및 혀(Mouth/Tongue): 편안한 개구호흡/미소, 굳게 다문 입술, 코 핥기(카밍 시그널), 이빨 노출 여부\n"
+            "4. 몸 및 자세(Posture): 플레이 보우(Play bow), 근육 경직/무게중심 낮춤(불안/두려움), 이완된 누운 자세(편안함)\n\n"
+            "사진에 나타난 실제 감정을 다음 6가지 중 가장 적합한 1개로 엄격하게 선정하세요:\n"
+            "- 행복(Happy), 편안함(Relaxed), 불안(Anxious), 경계(Alert), 두려움(Fear), 놀이(Playful)\n\n"
+            "반드시 아래 JSON 포맷으로만 응답하세요:\n"
             "{\n"
             '  "emotion": "행복 | 편안함 | 불안 | 경계 | 두려움 | 놀이 중 택1",\n'
             '  "emotion_en": "Happy | Relaxed | Anxious | Alert | Fear | Playful 중 택1",\n'
             '  "emoji": "😊 | 😌 | 😟 | 😠 | 😨 | 🎾",\n'
-            '  "confidence": 85,\n'
-            '  "summary": "반려견의 전체적인 상태를 요약한 1~2문장의 설명",\n'
+            '  "confidence": 92,\n'
+            '  "summary": "사진에서 관찰된 실제 신체 언어를 근거로 작성한 1~2문장의 감정 상태 요약",\n'
             '  "cues": [\n'
-            f'    {{"part": "{CUE_EYE}", "observation": "관찰된 특징"}},\n'
-            f'    {{"part": "{CUE_EAR}", "observation": "관찰된 특징"}},\n'
-            f'    {{"part": "{CUE_MOUTH}", "observation": "관찰된 특징"}},\n'
-            f'    {{"part": "{CUE_BODY}", "observation": "관찰된 특징"}}\n'
+            f'    {{"part": "{CUE_EYE}", "observation": "사진 속 눈의 형태 및 시선 특징"}},\n'
+            f'    {{"part": "{CUE_EAR}", "observation": "사진 속 귀의 위치 및 각도 특징"}},\n'
+            f'    {{"part": "{CUE_MOUTH}", "observation": "사진 속 입, 혀, 입술의 모양 특징"}},\n'
+            f'    {{"part": "{CUE_BODY}", "observation": "사진 속 전신 자세, 근육 긴장도 특징"}}\n'
             '  ],\n'
             '  "recommendations": [\n'
-            '    "보호자가 취해야 할 권장 행동 1",\n'
-            '    "보호자가 취해야 할 권장 행동 2",\n'
-            '    "보호자가 취해야 할 권장 행동 3"\n'
+            '    "보호자가 취해야 할 구체적인 행동 1",\n'
+            '    "보호자가 취해야 할 구체적인 행동 2",\n'
+            '    "보호자가 취해야 할 구체적인 행동 3"\n'
             '  ],\n'
             '  "precautions": [\n'
-            '    "주의해야 할 점 또는 스트레스 예방 팁 1",\n'
-            '    "주의해야 할 점 또는 스트레스 예방 팁 2"\n'
+            '    "현재 감정 상태에서 주의해야 할 점 1",\n'
+            '    "현재 감정 상태에서 주의해야 할 점 2"\n'
             '  ]\n'
             "}"
         )
 
         # AI 모델에 보낼 유저 질문 텍스트 구성
         user_prompt_text = (
-            f"반려견 정보:\n- 품종: {breed}\n- 나이: {age}\n- 현재 상황: {situation}\n\n"
-            "이 사진의 눈, 귀, 입, 자세 등 신체 언어를 관찰하여 현재 감정과 보호자 가이드를 JSON으로 분석해주세요."
+            f"참고 정보 (품종: {breed}, 나이: {age}, 상황: {situation})\n\n"
+            "사진 속 반려견의 얼굴 표정과 귀, 입, 자세를 면밀히 관찰하여, 사진에 나타난 실제 감정을 동물행동학에 기반해 정밀 분석해주세요."
         )
 
         # API 연동 실행 및 응답 전송
@@ -322,7 +328,7 @@ class handler(BaseHTTPRequestHandler):
 
         user_content = [
             {"type": "text", "text": user_prompt_text},
-            {"type": "image_url", "image_url": {"url": image_data, "detail": "low"}}
+            {"type": "image_url", "image_url": {"url": image_data, "detail": "high"}}
         ]
 
         response = client.chat.completions.create(
