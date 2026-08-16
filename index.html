@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PawEmotion AI - 반려견 사진 기반 AI 감정 분석 & 행동 가이드</title>
+  <meta name="description" content="반려견의 표정과 신체 언어를 AI Vision 기술로 정밀 분석하여 현재 감정 상태와 보호자를 위한 맞춤형 행동 가이드를 제공합니다.">
+  <meta name="keywords" content="반려견 감정분석, AI 펫케어, 강아지 행동학, 강아지 표정 분석, PawEmotion AI, 펫테크">
+  <meta property="og:title" content="PawEmotion AI - 반려견 사진 기반 AI 감정 분석 서비스">
+  <meta property="og:description" content="사진 한 장으로 읽는 우리 아이의 마음! AI 기반 반려견 감정 분석 및 행동 처방 가이드">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= Navigation Bar ================= -->
+  <header class="navbar">
+    <div class="container">
+      <a href="#home" class="nav-brand">
+        <span class="brand-icon">🐾</span>
+        <span>Paw<span class="gradient-text">Emotion</span> AI</span>
+      </a>
+
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="#home" class="nav-link active">홈</a></li>
+          <li><a href="#analysis" class="nav-link">AI 감정 분석</a></li>
+          <li><a href="#guide" class="nav-link">감정 도감</a></li>
+          <li><a href="#history" class="nav-link">분석 기록</a></li>
+          <li><a href="#faq" class="nav-link">FAQ</a></li>
+          <li><a href="#about" class="nav-link">서비스 소개</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="테마 전환" title="다크/라이트 모드 전환">
+          <span id="themeIcon">🌙</span>
+        </button>
+        <a href="#analysis" class="btn btn-primary btn-sm">지금 분석하기</a>
+        <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="모바일 메뉴 열기">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= Hero Section ================= -->
+    <section id="home" class="hero-section">
+      <div class="hero-background-shapes"></div>
+      <div class="container">
+        <div class="hero-content">
+          <div class="badge badge-primary">
+            <span>✨ AI Vision x 동물행동학 결합 펫테크 솔루션</span>
+          </div>
+
+          <h1 class="hero-title">
+            사진 한 장으로 읽는<br>
+            <span class="gradient-text">우리 반려견의 진짜 속마음</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            말 못 하는 우리 강아지, 지금 정말 행복한 걸까요?<br>
+            눈, 귀, 입, 자세 등 미세한 신체 언어를 AI가 종합 분석하고 보호자 맞춤 행동 가이드를 처방해 드립니다.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#analysis" class="btn btn-primary btn-lg">
+              <span>🐶 무료 감정 분석 시작</span>
+              <span>→</span>
+            </a>
+            <a href="#guide" class="btn btn-secondary btn-lg">감정 도감 둘러보기</a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat-item glass-panel">
+              <div class="stat-number">6대</div>
+              <div class="stat-label">행동학 기반 감정 분류</div>
+            </div>
+            <div class="stat-item glass-panel">
+              <div class="stat-number">4-Point</div>
+              <div class="stat-label">눈·귀·입·자세 정밀 관찰</div>
+            </div>
+            <div class="stat-item glass-panel">
+              <div class="stat-number">100%</div>
+              <div class="stat-label">즉시 실천 가능한 행동 처방</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= AI Analysis Studio Section ================= -->
+    <section id="analysis" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="badge badge-primary">AI ANALYSIS STUDIO</div>
+          <h2 class="section-title">반려견 AI 감정 분석 스튜디오</h2>
+          <p class="section-desc">강아지의 선명한 사진을 업로드하거나 준비된 샘플로 AI 감정 진단을 바로 체험해보세요.</p>
+        </div>
+
+        <div class="analysis-layout">
+          <!-- Input Card -->
+          <div class="input-card glass-panel">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>📸</span> 사진 업로드 & 정보 입력
+            </h3>
+
+            <!-- 1-Click Sample Dogs -->
+            <div class="sample-section">
+              <div class="sample-title">
+                <span>💡</span> 샘플 사진으로 바로 체험하기:
+              </div>
+              <div class="sample-grid">
+                <button type="button" class="sample-btn" data-sample="happy">
+                  <img src="images/sample_happy.jpg" alt="행복한 리트리버" class="sample-thumb">
+                  <div class="sample-info">
+                    <span class="sample-name">골든리트리버</span>
+                    <span class="sample-tag">#행복 #놀이</span>
+                  </div>
+                </button>
+                <button type="button" class="sample-btn" data-sample="alert">
+                  <img src="images/sample_alert.jpg" alt="경계하는 시바견" class="sample-thumb">
+                  <div class="sample-info">
+                    <span class="sample-name">시바견</span>
+                    <span class="sample-tag">#경계 #집중</span>
+                  </div>
+                </button>
+                <button type="button" class="sample-btn" data-sample="relaxed">
+                  <img src="images/sample_relaxed.jpg" alt="편안한 말티즈" class="sample-thumb">
+                  <div class="sample-info">
+                    <span class="sample-name">말티즈</span>
+                    <span class="sample-tag">#휴식 #안정</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Drag & Drop Upload Zone -->
+            <div id="dropzone" class="upload-dropzone">
+              <div class="upload-icon">📷</div>
+              <div class="upload-prompt">사진을 이곳에 끌어다 놓거나 클릭하세요</div>
+              <div class="upload-hint">JPG, PNG, WEBP 지원 (최대 5MB)</div>
+              <input type="file" id="fileInput" accept="image/jpeg, image/png, image/webp" style="display: none;" aria-label="반려견 사진 업로드">
+            </div>
+
+            <!-- Image Preview Box -->
+            <div id="previewContainer" class="preview-container">
+              <img id="previewImage" src="" alt="업로드 미리보기" class="preview-img">
+              <button id="btnRemoveImage" class="btn-remove-img" title="사진 삭제">✕</button>
+            </div>
+
+            <!-- Form Meta Inputs -->
+            <div class="form-group">
+              <label for="dogBreed" class="form-label">반려견 품종</label>
+              <input type="text" id="dogBreed" class="form-input" placeholder="예: 골든 리트리버, 포메라니안, 믹스견 등">
+            </div>
+
+            <div class="form-group">
+              <label for="dogAge" class="form-label">나이 또는 월령 (선택)</label>
+              <input type="text" id="dogAge" class="form-input" placeholder="예: 2살, 6개월, 10살 노령견 등">
+            </div>
+
+            <div class="form-group">
+              <label for="dogSituation" class="form-label">현재 상황 또는 환경</label>
+              <input type="text" id="dogSituation" class="form-input" placeholder="예: 거실에서 휴식 중, 산책 중 낯선 개를 만남 등" value="집에서 휴식 중">
+              
+              <div class="situation-chips">
+                <button type="button" class="chip-btn" data-situation="집에서 휴식 중 🛋️">집에서 휴식 🛋️</button>
+                <button type="button" class="chip-btn" data-situation="야외 산책 중 🦮">야외 산책 🦮</button>
+                <button type="button" class="chip-btn" data-situation="장난감 놀이 중 🎾">놀이 중 🎾</button>
+                <button type="button" class="chip-btn" data-situation="동물병원 방문 중 🏥">동물병원 🏥</button>
+                <button type="button" class="chip-btn" data-situation="낯선 사람/개와 마주침 👥">낯선 사람 만남 👥</button>
+                <button type="button" class="chip-btn" data-situation="식사 및 간식 시간 🍖">식사/간식 🍖</button>
+              </div>
+            </div>
+
+            <button id="btnAnalyze" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
+              <span>✨ AI 감정 분석 시작하기</span>
+            </button>
+          </div>
+
+          <!-- Result Card -->
+          <div class="result-card glass-panel" id="resultCard">
+            <!-- Initial Placeholder -->
+            <div id="resultPlaceholder" class="result-placeholder">
+              <div class="placeholder-icon">🔍</div>
+              <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">분석 대기 중</h4>
+              <p style="font-size: 0.9rem; line-height: 1.6;">
+                왼쪽에서 사진을 선택하고 [AI 감정 분석 시작하기]를 누르시면,<br>
+                반려견의 표정과 신체 신호를 정밀 분석한 결과가 이곳에 표시됩니다.
+              </p>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingState" class="loading-state">
+              <div class="paw-spinner">🐾</div>
+              <div class="loading-text">AI Vision이 사진 속 표정을 관찰하고 있습니다...</div>
+              <div class="loading-subtext">눈, 귀, 입 모양 및 주변 상황 맥락을 분석 중입니다 (약 3~5초 소요)</div>
+            </div>
+
+            <!-- Active Result Content -->
+            <div id="resultContent" class="result-content">
+              <div class="result-header">
+                <div class="result-emotion-main">
+                  <span id="resEmoji" class="emotion-big-emoji">😊</span>
+                  <div>
+                    <div id="resEmotion" class="emotion-name">행복</div>
+                    <div id="resEmotionEn" class="emotion-name-en">HAPPY</div>
+                  </div>
+                </div>
+                <div class="confidence-box">
+                  <div id="resConfidence" class="confidence-val">92%</div>
+                  <div class="confidence-label">분석 신뢰도</div>
+                </div>
+              </div>
+
+              <!-- Confidence Progress Bar -->
+              <div class="confidence-bar-bg">
+                <div id="resConfidenceBar" class="confidence-bar-fill"></div>
+              </div>
+
+              <!-- Summary Quote -->
+              <div id="resSummary" class="summary-quote">
+                "현재 매우 편안하고 안정적인 심리 상태를 보이고 있습니다."
+              </div>
+
+              <!-- 4-Cues Observation Grid -->
+              <div class="cues-grid" id="resCuesGrid">
+                <!-- Dynamically injected cues -->
+              </div>
+
+              <!-- Recommendations -->
+              <div class="result-block">
+                <div class="result-block-title">
+                  <span>💡</span> 보호자를 위한 권장 행동 가이드
+                </div>
+                <ul class="action-list" id="resRecommendations">
+                  <!-- Dynamically injected -->
+                </ul>
+              </div>
+
+              <!-- Precautions -->
+              <div class="result-block">
+                <div class="result-block-title">
+                  <span>⚠️</span> 주의사항 및 교감 팁
+                </div>
+                <ul class="precaution-list" id="resPrecautions">
+                  <!-- Dynamically injected -->
+                </ul>
+              </div>
+
+              <!-- Result Footer Actions -->
+              <div class="result-footer-actions">
+                <button id="btnCopyResult" class="btn btn-secondary btn-sm" style="flex: 1;">📋 결과 복사</button>
+                <button id="btnSaveHistory" class="btn btn-outline btn-sm" style="flex: 1;">💾 기록 저장됨</button>
+                <button id="btnReset" class="btn btn-secondary btn-sm">🔄 새로 분석</button>
+              </div>
+
+              <div id="resSourceInfo" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; text-align: center;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Emotion Encyclopedia / Guide Section ================= -->
+    <section id="guide" class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="badge badge-primary">ETHOLOGY GUIDE</div>
+          <h2 class="section-title">반려견 6대 감정 도감 & 신체 언어</h2>
+          <p class="section-desc">반려견이 보내는 미세한 시그널(카밍 시그널)의 의미를 배우고 올바르게 교감해보세요.</p>
+        </div>
+
+        <div class="guide-filter-tabs">
+          <button class="filter-tab-btn active" data-filter="all">전체 보기</button>
+          <button class="filter-tab-btn" data-filter="positive">긍정적 감정 (행복/편안/놀이)</button>
+          <button class="filter-tab-btn" data-filter="caution">주의·스트레스 신호 (불안/경계/두려움)</button>
+        </div>
+
+        <div class="guide-cards-grid">
+          <!-- Card 1: Happy -->
+          <div class="guide-card" data-category="positive">
+            <div class="guide-card-header">
+              <span class="guide-emoji">😊</span>
+              <span class="guide-emotion-name">행복 (Happy)</span>
+              <span class="badge badge-success">긍정</span>
+            </div>
+            <p class="guide-desc">보호자와 주변 환경에 대해 높은 만족감과 기쁨을 느끼는 최상의 상태입니다.</p>
+            <div class="guide-signals-box">
+              <div class="guide-signals-title">👀 주요 신체 시그널</div>
+              <div>• 눈매가 부드럽고 편안하게 마주봄</div>
+              <div>• 입꼬리가 살짝 올라가며 입이 편안히 벌어짐</div>
+              <div>• 꼬리를 중간 높이에서 부드럽게 흔듦</div>
+            </div>
+            <div class="guide-tips-box">
+              <strong>💡 권장 행동:</strong> 다정한 목소리로 칭찬하고 기분 좋은 스킨십을 나눠주세요.
+            </div>
+          </div>
+
+          <!-- Card 2: Relaxed -->
+          <div class="guide-card" data-category="positive">
+            <div class="guide-card-header">
+              <span class="guide-emoji">😌</span>
+              <span class="guide-emotion-name">편안함 (Relaxed)</span>
+              <span class="badge badge-success">안정</span>
+            </div>
+            <p class="guide-desc">위험 요소가 없다고 느끼며 온몸의 근육이 이완되어 깊은 안정을 취하는 상태입니다.</p>
+            <div class="guide-signals-box">
+              <div class="guide-signals-title">👀 주요 신체 시그널</div>
+              <div>• 눈을 게슴츠레 뜨거나 부드럽게 감음</div>
+              <div>• 귀가 자연스러운 중립 위치에 있음</div>
+              <div>• 옆으로 눕거나 배를 살짝 드러내고 쉼</div>
+            </div>
+            <div class="guide-tips-box">
+              <strong>💡 권장 행동:</strong> 조용하고 아늑한 쉼터를 보장하며 휴식을 방해하지 마세요.
+            </div>
+          </div>
+
+          <!-- Card 3: Playful -->
+          <div class="guide-card" data-category="positive">
+            <div class="guide-card-header">
+              <span class="guide-emoji">🎾</span>
+              <span class="guide-emotion-name">놀이 (Playful)</span>
+              <span class="badge badge-primary">활동적</span>
+            </div>
+            <p class="guide-desc">보호자 또는 친구와 신나게 놀고 싶어 활력과 호기심이 넘쳐나는 상태입니다.</p>
+            <div class="guide-signals-box">
+              <div class="guide-signals-title">👀 주요 신체 시그널</div>
+              <div>• 앞다리를 낮추고 엉덩이를 드는 '플레이 보우' 자세</div>
+              <div>• 눈이 초롱초롱하며 혀를 내밀고 가볍게 헐떡임</div>
+              <div>• 꼬리를 빠르고 경쾌하게 흔듦</div>
+            </div>
+            <div class="guide-tips-box">
+              <strong>💡 권장 행동:</strong> 터그놀이, 노즈워크, 공 던지기로 에너지를 발산시켜 주세요.
+            </div>
+          </div>
+
+          <!-- Card 4: Anxious -->
+          <div class="guide-card" data-category="caution">
+            <div class="guide-card-header">
+              <span class="guide-emoji">😟</span>
+              <span class="guide-emotion-name">불안 (Anxious)</span>
+              <span class="badge badge-warning">주의</span>
+            </div>
+            <p class="guide-desc">불확실한 상황이나 스트레스로 인해 불편함과 긴장감을 느끼는 상태입니다.</p>
+            <div class="guide-signals-box">
+              <div class="guide-signals-title">👀 주요 신체 시그널</div>
+              <div>• 코를 혀로 날름 핥거나 하품을 자주 함</div>
+              <div>• 눈의 흰자위(고래 눈)가 드러남</div>
+              <div>• 귀가 뒤로 눕혀지고 몸을 웅크림</div>
+            </div>
+            <div class="guide-tips-box">
+              <strong>💡 권장 행동:</strong> 불안 원인과 거리를 두고, 차분하고 낮은 목소리로 안정을 유도하세요.
+            </div>
+          </div>
+
+          <!-- Card 5: Alert -->
+          <div class="guide-card" data-category="caution">
+            <div class="guide-card-header">
+              <span class="guide-emoji">😠</span>
+              <span class="guide-emotion-name">경계 (Alert)</span>
+              <span class="badge badge-warning">관찰 필요</span>
+            </div>
+            <p class="guide-desc">낯선 소리나 침입자 등 새로운 자극에 온 신경을 곤두세우고 주시하는 상태입니다.</p>
+            <div class="guide-signals-box">
+              <div class="guide-signals-title">👀 주요 신체 시그널</div>
+              <div>• 귀가 쫑긋 전방을 향해 팽팽하게 고정됨</div>
+              <div>• 입을 꽉 다물고 시선을 한곳에 고정함</div>
+              <div>• 신체 중심이 앞으로 쏠려 긴장된 자세</div>
+            </div>
+            <div class="guide-tips-box">
+              <strong>💡 권장 행동:</strong> 자극원에서 관심을 돌릴 수 있도록 간식이나 이름을 불러주세요.
+            </div>
+          </div>
+
+          <!-- Card 6: Fear -->
+          <div class="guide-card" data-category="caution">
+            <div class="guide-card-header">
+              <span class="guide-emoji">😨</span>
+              <span class="guide-emotion-name">두려움 (Fear)</span>
+              <span class="badge badge-danger">위험/보호</span>
+            </div>
+            <p class="guide-desc">심한 공포나 위협을 느껴 극도의 방어적 태세에 돌입한 상태입니다.</p>
+            <div class="guide-signals-box">
+              <div class="guide-signals-title">👀 주요 신체 시그널</div>
+              <div>• 꼬리를 다리 사이로 완전히 말아 넣음</div>
+              <div>• 몸을 최대한 납작하게 웅크리거나 미세하게 떪</div>
+              <div>• 시선을 완전히 회피하거나 도망칠 구석을 찾음</div>
+            </div>
+            <div class="guide-tips-box">
+              <strong>💡 권장 행동:</strong> 절대 억지로 만지거나 압박하지 말고, 안전한 은신처를 제공하세요.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Analysis History Section ================= -->
+    <section id="history" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="badge badge-primary">LOCAL STORAGE HISTORY</div>
+          <h2 class="section-title">최근 분석 기록</h2>
+          <p class="section-desc">내 브라우저에 안전하게 저장된 최근 분석 결과들을 다시 확인해보세요.</p>
+        </div>
+
+        <div class="history-header-actions">
+          <span style="font-weight: 600; color: var(--text-secondary);" id="historyCount">총 0건의 기록</span>
+          <button id="btnClearHistory" class="btn btn-secondary btn-sm" style="display: none;">전체 삭제</button>
+        </div>
+
+        <div class="history-grid" id="historyGrid">
+          <div class="history-empty">
+            아직 분석된 기록이 없습니다. 사진을 업로드하여 첫 번째 감정 분석을 시작해보세요! 🐾
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FAQ Section ================= -->
+    <section id="faq" class="section" style="background: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <div class="badge badge-primary">FREQUENTLY ASKED QUESTIONS</div>
+          <h2 class="section-title">자주 묻는 질문</h2>
+          <p class="section-desc">PawEmotion AI 서비스에 대해 궁금한 점을 확인하세요.</p>
+        </div>
+
+        <div class="faq-accordion">
+          <div class="faq-item active">
+            <button class="faq-question">
+              <span>Q. AI 감정 분석의 정확도는 얼마나 되나요?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer">
+              PawEmotion AI는 수의학 및 동물행동학(Canine Ethology)에서 검증된 카밍 시그널 및 표정 데이터베이스와 최신 멀티모달 비전 AI 모델을 기반으로 분석합니다. 눈, 귀, 입, 신체 자세를 복합적으로 관찰하여 85~95% 수준의 높은 행동학적 일치도를 제공합니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Q. 수의사의 진료나 전문 훈련을 대체할 수 있나요?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer">
+              본 서비스는 보호자가 반려견의 일상적인 감정 상태와 스트레스 신호를 쉽게 파악하도록 돕는 보조 가이드입니다. 질병, 심각한 공격성, 분리불안 등 의학적·전문적 진단과 치료는 반드시 수의사 및 공인 동물행동전문가와의 상담을 권장합니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Q. 어떤 사진을 올려야 가장 정확하게 분석되나요?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer">
+              반려견의 얼굴(눈, 귀, 주둥이)과 상반신 또는 전신이 잘 보이는 밝은 조명의 정면/측면 사진이 가장 좋습니다. 장난감이나 액세서리로 얼굴이 가려지지 않은 자연스러운 사진을 추천합니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Q. 업로드한 반려견 사진은 안전하게 보호되나요?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer">
+              사용자가 업로드한 이미지는 오직 실시간 감정 분석 요청 처리를 위해서만 일시적으로 사용되며, 서버에 영구 보관되지 않습니다. 분석 이력 또한 사용자의 로컬 브라우저(LocalStorage)에만 안전하게 저장됩니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Q. 이용 요금이 있나요?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer">
+              PawEmotion AI는 모든 반려견 보호자분들의 행복한 반려 생활을 위해 무료로 제공되고 있습니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= About Section ================= -->
+    <section id="about" class="section">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-text">
+            <div class="badge badge-primary">ABOUT PAWEMOTION</div>
+            <h3 style="margin-top: 0.8rem;">반려견과 보호자를 잇는<br><span class="gradient-text">따뜻한 AI 감성 테크놀로지</span></h3>
+            <p>
+              반려견은 우리에게 매 순간 수많은 신호를 보냅니다. 하지만 바쁜 일상 속에서 그들의 미세한 눈빛, 귀의 각도, 입 모양의 변화를 놓치기 쉽습니다.
+            </p>
+            <p>
+              <strong>PawEmotion AI</strong>는 동물응용과학 및 동물행동학의 이론적 기초 위에 최첨단 Vision AI를 접목하여, 보호자가 반려견의 내면 상태를 즉각 이해하고 올바른 교감을 나눌 수 있도록 돕기 위해 개발되었습니다.
+            </p>
+            <ul class="feature-list">
+              <li class="feature-list-item">
+                <span class="feature-check-icon">✓</span>
+                <span>최신 멀티모달 비전 모델 기반 정밀 표정 분석</span>
+              </li>
+              <li class="feature-list-item">
+                <span class="feature-check-icon">✓</span>
+                <span>상황 맥락(Context)을 고려한 맞춤형 케어 가이드</span>
+              </li>
+              <li class="feature-list-item">
+                <span class="feature-check-icon">✓</span>
+                <span>서버리스 아키텍처로 빠르고 안전한 개인정보 처리</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="glass-panel" style="padding: 2.2rem; text-align: center;">
+            <div style="font-size: 3.5rem; margin-bottom: 1rem;">🐾 🐶 💖</div>
+            <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.8rem;">반려견의 행복한 미소를 지켜주세요</h4>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+              지금 바로 사진 한 장으로 우리 아이의 기분을 확인해보세요.
+            </p>
+            <a href="#analysis" class="btn btn-primary">지금 분석하러 가기</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= Footer ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>🐾 PawEmotion AI</h4>
+          <p>반려견 사진 기반 AI 감정 분석 및 행동 가이드 웹 서비스</p>
+          <div style="margin-top: 1rem;">
+            <span class="disclaimer-badge">⚠️ 수의학적 진단 및 처방을 대체하지 않습니다.</span>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <h5>바로가기</h5>
+          <ul>
+            <li><a href="#home">홈</a></li>
+            <li><a href="#analysis">AI 감정 분석</a></li>
+            <li><a href="#guide">감정 도감</a></li>
+            <li><a href="#history">분석 기록</a></li>
+            <li><a href="#faq">자주 묻는 질문</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links">
+          <h5>프로젝트 정보</h5>
+          <ul>
+            <li><a href="https://github.com" target="_blank" rel="noopener">GitHub Repository</a></li>
+            <li><a href="#about">개발 배경 및 기획</a></li>
+            <li><a href="#faq">개인정보 및 보안</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 PawEmotion AI. All rights reserved.</div>
+        <div>Built with Vanilla HTML/CSS/JS & Vercel Python Serverless</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="js/main.js"></script>
+</body>
+</html>
