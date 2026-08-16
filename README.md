@@ -3,7 +3,7 @@
 > **사진 한 장으로 읽는 우리 아이의 마음!**  
 > **PawEmotion AI**는 반려견의 표정과 신체 언어(눈, 귀, 입, 자세)를 멀티모달 비전 AI로 정밀 분석하여 현재 감정 상태를 진단하고, 보호자에게 동물행동학 기반 맞춤형 행동 가이드를 처방해 주는 AI 웹 서비스입니다.
 
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-black?style=flat&logo=vercel)](https://hj202608m3.vercel.app)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-black?style=flat&logo=vercel)](https://hj202608m3-1-mtbbcbty8-haru2014s-projects.vercel.app/)
 [![Tech Stack](https://img.shields.io/badge/Stack-Vanilla%20HTML%2FCSS%2FJS-orange)](#-기술-스택-tech-stack)
 [![Backend](https://img.shields.io/badge/Backend-Python%20Serverless-blue?logo=python)](#-기술-스택-tech-stack)
 [![AI Model](https://img.shields.io/badge/AI-OpenAI%20Vision%20API-green?logo=openai)](#-기술-스택-tech-stack)
@@ -49,8 +49,8 @@
 
 ## 🌐 3. 배포 URL 및 데모 (Live Demo)
 
-- **Vercel 프로덕션 배포 주소**: `https://hj202608m3.vercel.app` *(또는 사용자의 Vercel 배포 URL)*
-- **GitHub 저장소**: `https://github.com/haru2014/hj202608m3`
+- **Vercel 프로덕션 배포 주소**: [https://hj202608m3-1-mtbbcbty8-haru2014s-projects.vercel.app/](https://hj202608m3-1-mtbbcbty8-haru2014s-projects.vercel.app/)
+- **GitHub 저장소**: [https://github.com/haru2014/hj202608m3-1](https://github.com/haru2014/hj202608m3-1)
 
 ---
 
@@ -93,7 +93,7 @@ hj202608m3/
 
 ### 1) 저장소 복제 (Clone)
 ```bash
-git clone https://github.com/haru2014/hj202608m3.git
+git clone https://github.com/haru2014/hj202608m3-1.git
 cd hj202608m3
 ```
 

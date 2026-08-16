@@ -527,7 +527,7 @@ ${(latestAnalysisResult.recommendations || []).map(r => '- ' + r).join('\n')}
 ⚠️ 주의사항:
 ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
 
-서비스 링크: https://pawemotion-ai.vercel.app`;
+서비스 링크: https://hj202608m3-1-mtbbcbty8-haru2014s-projects.vercel.app`;
 
     // 비동기 클립보드 복사 API 호출
     navigator.clipboard.writeText(text).then(() => {

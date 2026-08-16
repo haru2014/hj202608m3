@@ -27,14 +27,14 @@ class handler(BaseHTTPRequestHandler):
         is_allowed = False
         if origin:
             # 로컬 개발 환경 및 Vercel 배포 도메인 허용 여부를 검증
-            if origin.startswith(('http://localhost:', 'http://127.0.0.1:')) or origin.endswith('.vercel.app') or origin == 'https://hj202608m3.vercel.app':
+            if origin.startswith(('http://localhost:', 'http://127.0.0.1:')) or origin.endswith('.vercel.app') or 'vercel.app' in origin:
                 is_allowed = True
 
         if is_allowed:
             self.send_header('Access-Control-Allow-Origin', origin)
         else:
             # 허용되지 않는 도메인은 기본 공식 사이트 주소로 지정하여 무단 도용 방지
-            self.send_header('Access-Control-Allow-Origin', 'https://hj202608m3.vercel.app')
+            self.send_header('Access-Control-Allow-Origin', 'https://hj202608m3-1-mtbbcbty8-haru2014s-projects.vercel.app')
 
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS') # 허용할 HTTP 메서드 종류
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization') # 허용할 요청 헤더 목록
