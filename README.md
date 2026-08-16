@@ -225,19 +225,28 @@ Content-Type: application/json
 ## 🛠️ 11. 최근 작업 내역 (Recent Updates)
 
 ### 2026-08-16 작업 내역
-1. **SonarLint 개발 환경 최적화**:
-   - Windows 환경에서 JavaScript/TypeScript 정적 분석이 정상 동작하도록 `.vscode/settings.json` 파일을 작업 영역(Workspace) 수준에서 생성했습니다.
-   - 권장 사양에 부합하는 Node.js 실행 파일 경로(`v24.14.0`)를 Windows 경로 백슬래시 이스케이프 규격에 맞추어 `sonarlint.pathToNodeExecutable`에 설정했습니다.
-2. **백엔드 소스 코드 상세 한글 주석 작업 (`api/analyze.py`)**:
-   - HTTP 통신 핸들러 구조(`BaseHTTPRequestHandler`), CORS 헤더 구성 메커니즘, `.env` 파일 로컬 동적 파싱 로직을 초보자도 쉽게 읽을 수 있도록 친절히 설명했습니다.
-   - 외부 라이브러리(`requests` 등) 없이 파이썬 기본 라이브러리인 `urllib.request`만을 이용해 Gemini API에 멀티모달 이미지/텍스트 페이로드를 전송하고 응답을 받는 동작 원리를 기술했습니다.
-   - OpenAI SDK GPT-4o-mini Vision 분석 호출 바인딩, 그리고 API 연동 장애 발생 시 작동하는 규칙 기반 대체 엔진(Fallback/Demo) 매커니즘을 상세히 기술했습니다.
-3. **프론트엔드 소스 코드 상세 한글 주석 작업 (`js/main.js`)**:
-   - 상태 관리 객체(`state`), DOM 엘리먼트 쿼리 역할, 로컬스토리지를 연동한 라이트/다크 테마 기억 기능의 역할을 상세하게 기술했습니다.
-   - HTML5 `FileReader` 및 `Canvas` API를 활용하여 유저가 올리거나 사전 등록된 이미지 URL을 비동기적으로 Base64 문자열로 렌더링하고 압축 변환하는 로직을 해설했습니다.
-   - 비동기 `fetch` 호출 시 네트워크 장애 및 타임아웃에 대비하기 위해 `AbortController`를 30초 타이머와 함께 바인딩하여 안전하게 Fallback 모드로 스위칭하는 예외 처리 흐름을 설명했습니다.
-   - 분석 결과 데이터 가독성 렌더링, LocalStorage를 이용해 최근 10개까지 감정 기록을 안전하게 관리하는 CRUD 기능(개별 삭제, 전체 삭제 포함)을 주석화했습니다.
-   - 스크롤을 감지하는 네비게이션 스파이(Scroll Spy), FAQ 아코디언, Toast 알림창 빌더, 그리고 XSS 웹 보안 방어를 위한 HTML 엔티티 치환 헬퍼(`escapeHtml`)의 역할을 구체적으로 명시했습니다.
+
+#### 1. 코드 품질 개선 및 린터(Linter) 경고 전면 해결
+- **CSS 호환성 보완 (`css/style.css`)**:
+  - 크로스 브라우저 표준 준수를 위해 `-webkit-background-clip: text;`와 함께 표준 `background-clip: text;` 속성을 정의하여 브라우저 호환성 경고를 해결했습니다.
+- **JavaScript 모던 웹 표준 리팩토링 (`js/main.js`)**:
+  - `getAttribute('data-...')` 및 `setAttribute('data-...', ...)` 호출을 최신 웹 표준 권장 방식인 `.dataset` 프로퍼티 접근으로 전면 교체했습니다.
+  - 전역 `parseInt()` 함수를 명시적이고 안전한 `Number.parseInt()`로 수정했습니다.
+  - XSS 방어 헬퍼 함수인 `escapeHtml()`을 외곽(Outer) 스코프로 이동하고 `replaceAll()` 메서드를 적용하여 코드 가독성과 성능을 최적화했습니다.
+- **Python 정적 분석 경고 해제 (`api/analyze.py`)**:
+  - `try...except ImportError` 구문으로 작성된 선택적 SDK 로드 부분에 `# type: ignore` 주석을 추가하여 IDE/정적 분석기(Pylance/Pyright)의 `Cannot find module openai` 가짜 양성(False-positive) 경고를 해결했습니다.
+
+#### 2. Git 브랜치 병합 및 충돌(Conflict) 해결
+- 독립적으로 생성된 원격 저장소(`publish/main`)의 히스토리를 강제 병합(`--allow-unrelated-histories`)하는 과정에서 발생한 충돌을 최신 패치가 적용된 로컬 파일 기준으로 완벽하게 해결하고 병합 커밋을 마쳤습니다.
+
+#### 3. Vercel 최신 Python 빌드 & 라우팅 시스템 완벽 호환 구축
+- **표준 패키지 설정 파일 구성 (`pyproject.toml`)**:
+  - Vercel 최신 빌드 도구(`uv` 패키지 매니저 및 Python 3.12+ 런타임) 규격에 맞추어 `[project]` 메타데이터와 패키지 의존성(`dependencies`), Vercel 진입점(`[tool.vercel] entrypoint = "api.analyze:handler"`) 설정을 완료했습니다.
+- **빌드 경고 제거 (`vercel.json`)**:
+  - 불필요하고 중복되었던 내부 `rewrites` 설정을 제거하여 빌드 경고(`WARNING! Internal rewrites...`)를 깔끔하게 해제했습니다.
+- **웹페이지 정적 서빙 및 API 하이브리드 라우팅 고도화 (`api/analyze.py`)**:
+  - `api/analyze.py`의 `do_GET` 핸들러를 업그레이드하여, 사용자가 브라우저로 메인 웹 주소(`/`, `/index.html`, CSS, JS, 이미지 에셋 등)에 접근할 때는 정상적으로 **프론트엔드 UI 화면**이 렌더링되도록 구현했습니다.
+  - 동시에 `/api/analyze` 또는 `/api` 엔드포인트로 들어오는 요청에는 API 상태 점검(Health Check) JSON을 반환하도록 분기 처리하여 배포 안정성을 극대화했습니다.
 
 ---
 
