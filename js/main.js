@@ -195,6 +195,10 @@ document.addEventListener('DOMContentLoaded', () => {
       state.selectedImageName = file.name;
       displayImagePreview(state.selectedImageData); // 화면 프리뷰 영역에 이미지 배치
       sampleBtns.forEach(b => b.classList.remove('selected')); // 샘플 강아지 선택 해제
+      chipBtns.forEach(c => c.classList.remove('active')); // 선택된 칩 해제
+      dogBreedInput.value = '';
+      dogAgeInput.value = '';
+      dogSituationInput.value = '';
       showToast('사진이 등록되었습니다. 추가 정보를 확인하고 분석을 시작하세요!', 'success');
     };
     reader.readAsDataURL(file); // 비동기 읽기 실행 시작
