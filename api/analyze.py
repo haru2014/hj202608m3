@@ -45,22 +45,71 @@ class handler(BaseHTTPRequestHandler):
         self._send_cors_headers() # CORS 헤더 적용
         self.end_headers() # 응답 헤더 작성 완료
 
-    # GET 요청 처리 (서버 상태 확인 및 정보 제공용)
+    # GET 요청 처리 (정적 웹페이지 서빙 및 API 상태 확인용)
     def do_GET(self):
-        self.send_response(200) # 성공 응답 설정
-        self._send_cors_headers() # CORS 헤더 적용
-        self.send_header('Content-Type', JSON_CONTENT_TYPE) # 응답 본문 형식을 JSON으로 정의
-        self.end_headers() # 헤더 작성 완료
-        
-        # 반환할 기본 API 가이드 정보 구성
-        response_data = {
-            "status": "healthy",
-            "service": "PawEmotion AI API",
-            "version": "1.0.0",
-            "message": "POST /api/analyze with { image, breed, age, situation } to analyze canine emotion."
-        }
-        # JSON 포맷으로 문자열 변환 후 UTF-8 인코딩하여 클라이언트에 전송
-        self.wfile.write(json.dumps(response_data, ensure_ascii=False).encode('utf-8'))
+        clean_path = self.path.split('?')[0]
+
+        # API 상태 확인 엔드포인트 (/api/analyze 또는 /api)
+        if clean_path in ('/api/analyze', '/api', '/api/'):
+            self.send_response(200)
+            self._send_cors_headers()
+            self.send_header('Content-Type', JSON_CONTENT_TYPE)
+            self.end_headers()
+            response_data = {
+                "status": "healthy",
+                "service": "PawEmotion AI API",
+                "version": "1.0.0",
+                "message": "POST /api/analyze with { image, breed, age, situation } to analyze canine emotion."
+            }
+            self.wfile.write(json.dumps(response_data, ensure_ascii=False).encode('utf-8'))
+            return
+
+        # 정적 파일(index.html, CSS, JS, 이미지 등) 서빙 처리
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        if clean_path in ('/', '/index.html'):
+            target_file = os.path.join(base_dir, 'index.html')
+            content_type = 'text/html; charset=utf-8'
+        else:
+            rel_path = clean_path.lstrip('/')
+            target_file = os.path.join(base_dir, rel_path)
+
+            if clean_path.endswith('.css'):
+                content_type = 'text/css; charset=utf-8'
+            elif clean_path.endswith('.js'):
+                content_type = 'application/javascript; charset=utf-8'
+            elif clean_path.endswith(('.jpg', '.jpeg')):
+                content_type = 'image/jpeg'
+            elif clean_path.endswith('.png'):
+                content_type = 'image/png'
+            elif clean_path.endswith('.webp'):
+                content_type = 'image/webp'
+            elif clean_path.endswith('.json'):
+                content_type = 'application/json; charset=utf-8'
+            else:
+                content_type = 'text/plain; charset=utf-8'
+
+        # 정적 파일이 존재할 경우 파일 내용 전송
+        if os.path.isfile(target_file):
+            try:
+                with open(target_file, 'rb') as f:
+                    file_content = f.read()
+                self.send_response(200)
+                self._send_cors_headers()
+                self.send_header('Content-Type', content_type)
+                self.send_header('Content-Length', str(len(file_content)))
+                self.end_headers()
+                self.wfile.write(file_content)
+                return
+            except Exception:
+                pass
+
+        # 파일이 없을 경우 404 반환
+        self.send_response(404)
+        self._send_cors_headers()
+        self.send_header('Content-Type', 'text/plain; charset=utf-8')
+        self.end_headers()
+        self.wfile.write(b"404 Not Found")
 
     # POST 요청 처리 (클라이언트로부터 강아지 정보 및 이미지 데이터를 받아 분석을 수행하는 핵심 로직)
     def do_POST(self):
