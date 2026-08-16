@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ================= 2. DOM 요소 선택 (DOM Elements Selection) =================
   // HTML 코드에서 자바스크립트로 조작하려는 엘리먼트(태그)들을 가져옵니다.
-  
+
   // 테마 및 네비게이션 관련 요소
   const themeToggleBtn = document.getElementById('themeToggleBtn'); // 라이트/다크 테마 토글 버튼
   const themeIcon = document.getElementById('themeIcon');           // 테마 아이콘 표시 영역 (해/달 이모지)
@@ -116,12 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', () => {
     const sections = document.querySelectorAll('section'); // 모든 섹션 요소들
     const scrollPos = window.scrollY + 120; // 픽셀 오프셋을 두어 활성화 타이밍 조절
-    
+
     sections.forEach(section => {
       const top = section.offsetTop; // 섹션의 상단 높이값
       const height = section.offsetHeight; // 섹션의 전체 높이값
       const id = section.getAttribute('id'); // 섹션의 ID값 (예: #home, #analysis 등)
-      
+
       // 현재 스크롤 위치가 섹션 범위 안에 있을 때
       if (scrollPos >= top && scrollPos < top + height) {
         navLinks.forEach(l => {
@@ -332,11 +332,118 @@ document.addEventListener('DOMContentLoaded', () => {
           signal: controller.signal // Abort 신호 바인딩
         });
 
-        // 응답이 안전하게 도착하면   // ================= 9. 클라이언트 대체 분석 엔진 (Client Fallback Heuristic) =================
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`API 응답 오류 (상태 코드: ${response.status})`);
+        }
+
+        data = await response.json();
+      } catch (fetchErr) {
+        console.warn('Backend API request unreached or timed out, activating intelligent client-side analyzer...', fetchErr);
+        // 백엔드 API 서버를 사용할 수 없거나 시간 초과 시 클라이언트 자체 휴리스틱 알고리즘으로 대체(Fallback) 작동
+        data = simulateClientAnalysis(breed, age, situation);
+      }
+
+      latestAnalysisResult = data;
+      renderAnalysisResult(data);
+      saveToHistory(data, state.selectedImageData);
+      showToast('AI 감정 분석이 성공적으로 완료되었습니다!', 'success');
+
+    } catch (err) {
+      console.error('Analysis error:', err);
+      showToast(`분석 중 오류가 발생했습니다: ${err.message}`, 'error');
+      setLoadingState(false);
+      resultPlaceholder.style.display = 'block';
+    } finally {
+      setLoadingState(false);
+    }
+  });
+
+  // 로딩 상태에 맞춰 UI의 활성화 여부 및 애니메이션을 제어하는 함수
+  const setLoadingState = (isLoading) => {
+    state.isAnalyzing = isLoading;
+    btnAnalyze.disabled = isLoading;
+    btnAnalyze.innerHTML = isLoading
+      ? `<span>⏳ AI 심층 분석 중...</span>`
+      : `<span>🔍 AI 감정 분석 시작하기</span>`;
+
+    if (isLoading) {
+      resultPlaceholder.style.display = 'none';
+      resultContent.style.display = 'none';
+      loadingState.style.display = 'block';
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      loadingState.style.display = 'none';
+    }
+  };
+
+  // ================= 8. 상세 분석 결과 출력 및 UI 바인딩 (Render Analysis Result) =================
+  // 서버 또는 로컬 엔진에서 전달받은 결과 데이터를 HTML 태그에 하나씩 대입하여 렌더링
+  const renderAnalysisResult = (data) => {
+    resultPlaceholder.style.display = 'none';
+    loadingState.style.display = 'none';
+    resultContent.style.display = 'block';
+
+    resEmoji.textContent = data.emoji || '😊';
+    resEmotion.textContent = data.emotion || '행복';
+    resEmotionEn.textContent = data.emotion_en || 'HAPPY';
+    resConfidence.textContent = `${data.confidence || 90}%`;
+    resSummary.textContent = `"${data.summary || '반려견의 긍정적인 신체 언어가 관찰되었습니다.'}"`;
+
+    // 신뢰도 게이지 바 애니메이션 처리 (0%에서 시작해 서서히 올라가도록 함)
+    resConfidenceBar.style.width = '0%';
+    setTimeout(() => {
+      resConfidenceBar.style.width = `${data.confidence || 90}%`;
+    }, 100);
+
+    // 신체 부위별 감정 시그널(Cues) 렌더링
+    resCuesGrid.innerHTML = '';
+    if (data.cues && Array.isArray(data.cues)) {
+      data.cues.forEach(cue => {
+        const cueCard = document.createElement('div');
+        cueCard.className = 'cue-card';
+        cueCard.innerHTML = `
+          <div class="cue-title">
+            <span>🔎</span> ${escapeHtml(cue.part)}
+          </div>
+          <div class="cue-desc">${escapeHtml(cue.observation)}</div>
+        `;
+        resCuesGrid.appendChild(cueCard);
+      });
+    }
+
+    // 보호자 권장 조치 가이드 렌더링
+    resRecommendations.innerHTML = '';
+    if (data.recommendations && Array.isArray(data.recommendations)) {
+      data.recommendations.forEach(rec => {
+        const li = document.createElement('li');
+        li.className = 'action-item';
+        li.innerHTML = `<span class="check-icon">✓</span> <span>${escapeHtml(rec)}</span>`;
+        resRecommendations.appendChild(li);
+      });
+    }
+
+    // 주의사항 및 스트레스 방지 팁 렌더링
+    resPrecautions.innerHTML = '';
+    if (data.precautions && Array.isArray(data.precautions)) {
+      data.precautions.forEach(prec => {
+        const li = document.createElement('li');
+        li.className = 'precaution-item';
+        li.innerHTML = `<span class="warn-icon">⚠️</span> <span>${escapeHtml(prec)}</span>`;
+        resPrecautions.appendChild(li);
+      });
+    }
+
+    // 분석 모델 출처 표시
+    resSourceInfo.textContent = data.source ? `분석 출처: ${data.source}` : 'PawEmotion AI 동물행동학 분석 모델';
+  };
+
+  // ================= 9. 클라이언트 대체 분석 엔진 (Client Fallback Heuristic) =================
   // 백엔드가 비활성화되어 있거나 서버 점검 중일 때, 텍스트(상황, 품종) 매칭을 통해 적절한 시그널 및 맞춤 가이드를 돌려주는 장치
   const simulateClientAnalysis = (breed, age, situation) => {
     const sit = situation.toLowerCase();
-    
+
     // 기본값 설정 (Happy)
     let emotion = "행복", emotion_en = "Happy", emoji = "😊", conf = 92;
     let summary = `${breed} 친구는 현재 보호자와의 일상 속에서 편안하고 즐거운 행복감을 느끼고 있습니다.`;
@@ -375,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "불안해할 때 억지로 안거나 과도하게 쓰다듬으면 긴장이 가중될 수 있습니다.",
         "강요하지 말고 반려견이 스스로 안정을 찾을 때까지 충분한 시간을 주세요."
       ];
-    // 놀이/산책이 감지되면 흥분/놀이 상태 반환
+      // 놀이/산책이 감지되면 흥분/놀이 상태 반환
     } else if (sit.includes('놀이') || sit.includes('산책') || sit.includes('공') || sit.includes('터그')) {
       emotion = "놀이"; emotion_en = "Playful"; emoji = "🎾"; conf = 95;
       summary = `${breed} 친구는 활력과 호기심이 최고조에 달해 신나는 놀이 활동에 푹 빠져 있습니다!`;
@@ -407,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 클라이언트의 clipboard API를 활용해 결과를 정제된 텍스트 폼으로 복사
   btnCopyResult.addEventListener('click', () => {
     if (!latestAnalysisResult) return;
-    
+
     // 복사할 다중행 텍스트 가이드 빌드
     const text = `[PawEmotion AI 분석 결과]
 🐾 반려견: ${dogBreedInput.value || '반려견'} (${dogAgeInput.value || '나이 미지정'})
@@ -460,7 +567,7 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
 
     // 최신 결과를 목록 맨 앞에 밀어 넣음 (Unshift)
     state.history.unshift(item);
-    
+
     // 최대 저장 한도(10개) 초과 시 가장 오래된 마지막 요소 제거 (Pop)
     if (state.history.length > 10) state.history.pop();
 
