@@ -21,6 +21,7 @@
 8. [API 명세서 (API Specification)](#-api-명세서-api-specification)
 9. [오류 및 예외 처리 기준 (Error Handling)](#-오류-및-예외-처리-기준-error-handling)
 10. [서비스 기획 요약 (Service Planning)](#-서비스-기획-요약-service-planning)
+11. [최근 작업 내역 (Recent Updates)](#-최근-작업-내역-recent-updates)
 
 ---
 
@@ -218,6 +219,25 @@ Content-Type: application/json
   - 단순 감정 라벨만 붙이는 것이 아닌, **동물행동학적 관찰 근거(눈/귀/입/자세 4개 항목)**와 **보호자가 즉시 따라 할 수 있는 맞춤형 케어 행동 체크리스트**를 함께 제공.
 - **면책 조항 (Disclaimer)**:
   - 본 서비스는 수의학적 진료나 전문 행동 교정 치료를 대체하지 않으며, 보호자의 일상적인 이해를 돕는 AI 보조 가이드입니다.
+
+---
+
+## 🛠️ 11. 최근 작업 내역 (Recent Updates)
+
+### 2026-08-16 작업 내역
+1. **SonarLint 개발 환경 최적화**:
+   - Windows 환경에서 JavaScript/TypeScript 정적 분석이 정상 동작하도록 `.vscode/settings.json` 파일을 작업 영역(Workspace) 수준에서 생성했습니다.
+   - 권장 사양에 부합하는 Node.js 실행 파일 경로(`v24.14.0`)를 Windows 경로 백슬래시 이스케이프 규격에 맞추어 `sonarlint.pathToNodeExecutable`에 설정했습니다.
+2. **백엔드 소스 코드 상세 한글 주석 작업 (`api/analyze.py`)**:
+   - HTTP 통신 핸들러 구조(`BaseHTTPRequestHandler`), CORS 헤더 구성 메커니즘, `.env` 파일 로컬 동적 파싱 로직을 초보자도 쉽게 읽을 수 있도록 친절히 설명했습니다.
+   - 외부 라이브러리(`requests` 등) 없이 파이썬 기본 라이브러리인 `urllib.request`만을 이용해 Gemini API에 멀티모달 이미지/텍스트 페이로드를 전송하고 응답을 받는 동작 원리를 기술했습니다.
+   - OpenAI SDK GPT-4o-mini Vision 분석 호출 바인딩, 그리고 API 연동 장애 발생 시 작동하는 규칙 기반 대체 엔진(Fallback/Demo) 매커니즘을 상세히 기술했습니다.
+3. **프론트엔드 소스 코드 상세 한글 주석 작업 (`js/main.js`)**:
+   - 상태 관리 객체(`state`), DOM 엘리먼트 쿼리 역할, 로컬스토리지를 연동한 라이트/다크 테마 기억 기능의 역할을 상세하게 기술했습니다.
+   - HTML5 `FileReader` 및 `Canvas` API를 활용하여 유저가 올리거나 사전 등록된 이미지 URL을 비동기적으로 Base64 문자열로 렌더링하고 압축 변환하는 로직을 해설했습니다.
+   - 비동기 `fetch` 호출 시 네트워크 장애 및 타임아웃에 대비하기 위해 `AbortController`를 30초 타이머와 함께 바인딩하여 안전하게 Fallback 모드로 스위칭하는 예외 처리 흐름을 설명했습니다.
+   - 분석 결과 데이터 가독성 렌더링, LocalStorage를 이용해 최근 10개까지 감정 기록을 안전하게 관리하는 CRUD 기능(개별 삭제, 전체 삭제 포함)을 주석화했습니다.
+   - 스크롤을 감지하는 네비게이션 스파이(Scroll Spy), FAQ 아코디언, Toast 알림창 빌더, 그리고 XSS 웹 보안 방어를 위한 HTML 엔티티 치환 헬퍼(`escapeHtml`)의 역할을 구체적으로 명시했습니다.
 
 ---
 
