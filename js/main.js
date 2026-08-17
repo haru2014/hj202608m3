@@ -70,10 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // [기록 및 추가 액션 관련 태그들]
   const btnCopyResult = document.getElementById('btnCopyResult');           // 결과 요약 텍스트 클립보드 복사 버튼
+  const btnSaveReport = document.getElementById('btnSaveReport');           // 결과 저장 (TXT) 버튼
   const btnReset = document.getElementById('btnReset');                     // 결과 초기화(새로 시작) 버튼
   const historyGrid = document.getElementById('historyGrid');               // 이력 카드 목록 그리드 컨테이너
   const historyCount = document.getElementById('historyCount');             // 이력 건수 표시 텍스트
   const btnClearHistory = document.getElementById('btnClearHistory');       // 이력 전체 영구 삭제 버튼
+  const btnExportHistory = document.getElementById('btnExportHistory');     // 이력 전체 내보내기 버튼
 
   // 가장 마지막으로 성공한 AI 결과 데이터를 메모리에 잡아둘 변수
   let latestAnalysisResult = null;
@@ -540,6 +542,64 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
   });
 
   // ==========================================================================
+  // 9.5 분석 결과 보고서 다운로드 (Download Report Utility)
+  // ==========================================================================
+  btnSaveReport.addEventListener('click', () => {
+    if (!latestAnalysisResult) {
+      showToast('저장할 분석 결과가 없습니다.', 'warning');
+      return;
+    }
+
+    const breed = dogBreedInput.value.trim() || '미확인 품종';
+    const age = dogAgeInput.value.trim() || '미확인';
+    const situation = dogSituationInput.value.trim() || '일상 상태';
+    const dateStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\s/g, '').replace(/\./g, '-').slice(0, -1);
+
+    const reportText = `==================================================
+🐾 PawEmotion AI - 반려견 감정 분석 보고서 🐾
+==================================================
+
+[기본 정보]
+- 반려견 품종 : ${breed}
+- 나이/월령   : ${age}
+- 분석 상황   : ${situation}
+- 분석 일시   : ${new Date().toLocaleString('ko-KR')}
+
+[감정 진단 결과]
+- 감정 상태   : ${latestAnalysisResult.emoji} ${latestAnalysisResult.emotion} (${latestAnalysisResult.emotion_en})
+- 신뢰도      : ${latestAnalysisResult.confidence}%
+- 한줄 요약   : "${latestAnalysisResult.summary}"
+
+[행동학적 세부 분석 (눈/귀/입/몸)]
+${(latestAnalysisResult.cues || []).map(cue => `🔍 ${cue.part} : ${cue.observation}`).join('\n')}
+
+[보호자를 위한 권장 행동 가이드]
+${(latestAnalysisResult.recommendations || []).map((rec, i) => `${i + 1}. ${rec}`).join('\n')}
+
+[주의사항 및 교감 팁]
+${(latestAnalysisResult.precautions || []).map((prec, i) => `⚠️ ${prec}`).join('\n')}
+
+--------------------------------------------------
+※ 본 보고서는 AI 비전 기술과 동물행동학 데이터베이스를 바탕으로 추출된 행동 추정 보고서이며, 수의학적 진단 및 치료를 대체할 수 없습니다.
+==================================================`;
+
+    // 블롭(Blob) 객체를 활용해 텍스트 파일을 가상으로 생성
+    const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    // a 태그를 생성해 다운로드 트리거
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `PawEmotion_AI_보고서_${breed.replace(/[\s/\\:*?"<>|]/g, '_')}_${dateStr}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showToast('분석 결과 보고서(TXT)가 다운로드되었습니다! 💾', 'success');
+  });
+
+  // ==========================================================================
   // 10. 스튜디오 초기화 버튼 작동 (Reset UI)
   // ==========================================================================
   btnReset.addEventListener('click', () => {
@@ -592,6 +652,7 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
     // 저장된 과거 이력이 전혀 없을 경우의 플레이스홀더 출력
     if (history.length === 0) {
       btnClearHistory.style.display = 'none';
+      btnExportHistory.style.display = 'none';
       historyGrid.innerHTML = `
         <div class="history-empty">
           아직 분석된 기록이 없습니다. 사진을 업로드하여 첫 번째 감정 분석을 시작해보세요! 🐾
@@ -600,8 +661,9 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
       return;
     }
 
-    // 기록이 존재하면 삭제 버튼 활성화
+    // 기록이 존재하면 삭제 및 내보내기 버튼 활성화
     btnClearHistory.style.display = 'inline-block';
+    btnExportHistory.style.display = 'inline-block';
     historyGrid.innerHTML = ''; // 그리드 정화
 
     // 기록 루프를 돌며 미니 정보 카드 요소들을 하나씩 주입
@@ -643,6 +705,34 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
       localStorage.removeItem('pawemotion_history'); // 디스크 완전 삭제
       renderHistory();
       showToast('모든 분석 기록이 삭제되었습니다.', 'info');
+    }
+  });
+
+  // 최근 분석 기록 전체 내보내기 버튼 클릭 시 동작
+  btnExportHistory.addEventListener('click', () => {
+    if (state.history.length === 0) {
+      showToast('내보낼 분석 기록이 없습니다.', 'warning');
+      return;
+    }
+
+    try {
+      const dataStr = JSON.stringify(state.history, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      const dateStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\s/g, '').replace(/\./g, '-').slice(0, -1);
+      a.download = `pawemotion_history_backup_${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast('전체 분석 기록(JSON)이 백업 파일로 다운로드되었습니다! 📤', 'success');
+    } catch (err) {
+      console.error('History export error:', err);
+      showToast('기록 내보내기에 실패했습니다.', 'error');
     }
   });
 

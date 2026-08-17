@@ -508,3 +508,14 @@ class handler(BaseHTTPRequestHandler):
             "message": message
         }
         self.wfile.write(json.dumps(error_payload, ensure_ascii=False).encode('utf-8'))
+
+if __name__ == '__main__':
+    from http.server import HTTPServer
+    port = 8000
+    server = HTTPServer(('localhost', port), handler)
+    print(f"Starting local development server on http://localhost:{port}")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    server.server_close()

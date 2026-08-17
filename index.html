@@ -310,7 +310,7 @@
               <!-- 결과 하단 부가 액션 그룹 (복사, 초기화) -->
               <div class="result-footer-actions">
                 <button id="btnCopyResult" class="btn btn-secondary btn-sm" style="flex: 1;">📋 결과 복사</button>
-                <button id="btnSaveHistory" class="btn btn-outline btn-sm" style="flex: 1;">💾 기록 저장됨</button>
+                <button id="btnSaveReport" class="btn btn-outline btn-sm" style="flex: 1;">💾 결과 저장 (TXT)</button>
                 <button id="btnReset" class="btn btn-secondary btn-sm">🔄 새로 분석</button>
               </div>
 
@@ -477,7 +477,10 @@
         <!-- 기록 개수 및 일괄 청소 버튼 -->
         <div class="history-header-actions">
           <span style="font-weight: 600; color: var(--text-secondary);" id="historyCount">총 0건의 기록</span>
-          <button id="btnClearHistory" class="btn btn-secondary btn-sm" style="display: none;">전체 삭제</button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="btnExportHistory" class="btn btn-secondary btn-sm" style="display: none;">📤 기록 내보내기</button>
+            <button id="btnClearHistory" class="btn btn-secondary btn-sm" style="display: none;">전체 삭제</button>
+          </div>
         </div>
 
         <!-- 분석 기록 카드들이 동적으로 생성되는 그리드 컨테이너 -->
