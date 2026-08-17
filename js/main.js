@@ -553,7 +553,7 @@ ${(latestAnalysisResult.precautions || []).map(p => '- ' + p).join('\n')}
     const breed = dogBreedInput.value.trim() || '미확인 품종';
     const age = dogAgeInput.value.trim() || '미확인';
     const situation = dogSituationInput.value.trim() || '일상 상태';
-    const dateStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\s/g, '').replace(/\./g, '-').slice(0, -1);
+    const dateStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll(/\s/g, '').replaceAll(/\./g, '-').slice(0, -1);
 
     const reportText = `==================================================
 🐾 PawEmotion AI - 반려견 감정 분석 보고서 🐾
@@ -593,7 +593,7 @@ ${(latestAnalysisResult.precautions || []).map((prec, i) => `⚠️ ${prec}`).jo
     a.download = `PawEmotion_AI_보고서_${breed.replace(/[\s/\\:*?"<>|]/g, '_')}_${dateStr}.txt`;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    a.remove();
     URL.revokeObjectURL(url);
 
     showToast('분석 결과 보고서(TXT)가 다운로드되었습니다! 💾', 'success');
@@ -722,11 +722,11 @@ ${(latestAnalysisResult.precautions || []).map((prec, i) => `⚠️ ${prec}`).jo
       
       const a = document.createElement('a');
       a.href = url;
-      const dateStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\s/g, '').replace(/\./g, '-').slice(0, -1);
+      const dateStr = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replaceAll(/\s/g, '').replaceAll(/\./g, '-').slice(0, -1);
       a.download = `pawemotion_history_backup_${dateStr}.json`;
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
+      a.remove();
       URL.revokeObjectURL(url);
 
       showToast('전체 분석 기록(JSON)이 백업 파일로 다운로드되었습니다! 📤', 'success');
