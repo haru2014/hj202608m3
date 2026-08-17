@@ -13,7 +13,7 @@
 ## 📌 목차 (Table of Contents)
 1. [서비스 소개 (Service Overview)](#-1-서비스-소개-service-overview)
 2. [주요 기능 및 특징 (Key Features)](#-2-주요-기능-및-특징-key-features)
-3. [배포 URL 및 데모 (Live Demo)](#-3-배포-url-및-데모-live-demo)
+3. [배포 URL 및 서비스 시연 스크린샷 (Live Demo & Screenshots)](#-3-배포-url-및-서비스-시연-스크린샷-live-demo--screenshots)
 4. [기술 스택 (Tech Stack)](#-4-기술-스택-tech-stack)
 5. [프로젝트 디렉토리 구조 (Directory Structure)](#-5-프로젝트-디렉토리-구조-directory-structure)
 6. [📋 미션 3 체크리스트 & 기술 심층 해설 (Technical Deep-Dive)](#-6-미션-3-체크리스트--기술-심층-해설-technical-deep-dive)
@@ -52,10 +52,31 @@
 
 ---
 
-## 🌐 3. 배포 URL 및 데모 (Live Demo)
+## 🌐 3. 배포 URL 및 서비스 시연 스크린샷 (Live Demo & Screenshots)
 
 - **Vercel 프로덕션 배포 주소**: [https://hj202608m3-1-mtbbcbty8-haru2014s-projects.vercel.app/](https://hj202608m3-1-mtbbcbty8-haru2014s-projects.vercel.app/)
 - **GitHub 저장소**: [https://github.com/haru2014/hj202608m3-1](https://github.com/haru2014/hj202608m3-1)
+
+### 📸 서비스 동작 및 AI 개발 증빙 스크린샷
+
+#### 1) 메인 홈 & 서비스 인트로 (Hero Section)
+> 서비스 비전, 통계 요약 카드, 상단 5대 메뉴 내비게이션(GNB) 및 다크/라이트 테마 토글이 적용된 메인 화면
+
+![메인 홈 및 내비게이션 화면](./서비스스크린샷01.jpg)
+
+---
+
+#### 2) AI 감정 분석 스튜디오 (실제 분석 결과 화면)
+> 반려견 사진 업로드 $\rightarrow$ 동물행동학 비전 AI 분석 $\rightarrow$ **`두려움 (FEAR, 신뢰도 98%)`** 진단 및 4대 신체 부위(눈, 귀, 입, 자세) 정밀 관찰 근거 & 맞춤형 행동 가이드 표출
+
+![AI 감정 분석 결과 화면](./서비스스크린샷02.jpg)
+
+---
+
+#### 3) AI 코딩 도구(Antigravity IDE) 페어 프로그래밍 및 배포 과정
+> AI 코딩 어시스턴트와의 페어 프로그래밍을 통한 체크리스트 검증, 코드 리팩토링, Vercel 배포 및 Git 푸시 작업 과정 증빙
+
+![AI 코딩 도구 페어 프로그래밍 작업 증빙](./AI코딩도구사용과정스샷.jpg)
 
 ---
 
