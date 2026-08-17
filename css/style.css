@@ -1,80 +1,99 @@
 /* ==========================================================================
-   PawEmotion AI - Design System & Stylesheet
-   ========================================================================== */
+   PawEmotion AI - 웹 디자인 시스템 및 스타일시트 (CSS3)
+   ==========================================================================
+   이 파일은 HTML 뼈대 디자인을 담당하며, 다크/라이트 테마 색상 변수, 
+   애니메이션, 모던 정렬 레이아웃(Flexbox/Grid), 반응형 미디어쿼리를 정의합니다.
+*/
 
+/* [외부 폰트 서비스 연동] */
+/* @import: 구글 웹 폰트 서버로부터 영문 타이포그래피 전용인 'Outfit' 서체와 
+            한글 가독성이 뛰어난 'Noto Sans KR' 서체를 페이지에 불러옵니다. */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap');
 
-/* --- CSS Variables & Theming Tokens --- */
+/* --------------------------------------------------------------------------
+   1. CSS 전역 스타일 변수 선언 (Light Theme Tokens)
+   --------------------------------------------------------------------------
+   :root { ... }: 모든 HTML 태그 전체에서 공유하는 전역 변수(이름표) 선언 영역입니다.
+   변수를 활용하면 나중에 메인 컬러를 변경하고 싶을 때 이 곳의 한 줄만 고치면 
+   수천 줄의 코드가 일괄 변경되어 유지보수에 매우 유용합니다.
+*/
 :root {
-  /* Color Palette - Light Theme */
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.85);
-  --bg-card-hover: rgba(255, 255, 255, 0.98);
-  --border-color: rgba(226, 232, 240, 0.8);
-  --border-focus: #f59e0b;
+  /* [라이트 모드 배경 색상 정의] */
+  --bg-primary: #f8fafc;       /* 전체 웹페이지 바닥에 깔리는 가장 밝은 연회색 */
+  --bg-secondary: #ffffff;     /* 흰색 배경 구역 전용 */
+  --bg-tertiary: #f1f5f9;      /* 인풋 박스나 강조 패널용 살짝 어두운 회색 */
+  --bg-card: rgba(255, 255, 255, 0.85); /* 반투명 유리판 느낌을 주기 위한 rgba 배경 */
+  --bg-card-hover: rgba(255, 255, 255, 0.98); /* 마우스를 올렸을 때 불투명도가 강조되는 호버색 */
+  --border-color: rgba(226, 232, 240, 0.8);  /* 얇고 은은한 테두리 회색 */
+  --border-focus: #f59e0b;     /* 입력창을 마우스로 클릭(포커스)했을 때 뜨는 골드 오렌지색 */
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --text-inverse: #ffffff;
+  /* [텍스트 폰트 색상 정의] */
+  --text-primary: #0f172a;     /* 가독성이 가장 높은 짙은 회색/검정색 본문 텍스트 */
+  --text-secondary: #475569;   /* 부가 설명을 위한 조금 흐린 텍스트 */
+  --text-muted: #94a3b8;       /* 비활성화되거나 가장 연한 보조 텍스트 */
+  --text-inverse: #ffffff;     /* 배경색이 어두울 때(예: 오렌지색 버튼 위) 반대로 하얗게 출력할 글자색 */
 
-  /* Brand Accents */
-  --brand-primary: #f59e0b;
-  --brand-primary-hover: #d97706;
-  --brand-secondary: #ec4899;
-  --brand-gradient: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
-  --brand-gradient-soft: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(236, 72, 153, 0.12) 100%);
-  --brand-glow: rgba(245, 158, 11, 0.35);
+  /* [브랜드 아이덴티티 및 그라디언트 정의] */
+  --brand-primary: #f59e0b;    /* 서비스의 대표 심볼 색상 (오렌지 옐로우) */
+  --brand-primary-hover: #d97706; /* 마우스를 올렸을 때 살짝 어두워지는 주황색 */
+  --brand-secondary: #ec4899;  /* 보조 포인트 색상 (비비드 핑크) */
+  --brand-gradient: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%); /* 브랜드 오렌지-핑크 고급 그라데이션 */
+  --brand-gradient-soft: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(236, 72, 153, 0.12) 100%); /* 연한 투명 그라데이션 */
+  --brand-glow: rgba(245, 158, 11, 0.35); /* 버튼 아래 은은하게 비추는 그림자 네온 효과용 색상 */
 
-  /* Status Colors */
-  --success: #10b981;
+  /* [상태별 테마 컬러 정의] */
+  --success: #10b981;          /* 성공 및 안전 알림용 (초록색) */
   --success-bg: rgba(16, 185, 129, 0.12);
-  --warning: #f59e0b;
+  --warning: #f59e0b;          /* 주의 요구용 (황색) */
   --warning-bg: rgba(245, 158, 11, 0.12);
-  --danger: #ef4444;
+  --danger: #ef4444;           /* 경고 및 에러 차단용 (적색) */
   --danger-bg: rgba(239, 68, 68, 0.12);
-  --info: #3b82f6;
+  --info: #3b82f6;             /* 정보 공유용 (청색) */
   --info-bg: rgba(59, 130, 246, 0.12);
 
-  /* Shadows */
+  /* [그림자(Shadow) 크기 단계별 정의] */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 35px -5px rgba(0, 0, 0, 0.12), 0 10px 15px -5px rgba(0, 0, 0, 0.06);
 
-  /* Layout & Geometry */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
-  --radius-xl: 30px;
-  --radius-full: 9999px;
-  --max-width: 1240px;
-  --nav-height: 72px;
+  /* [모서리 곡률(Border Radius) 및 크기 정의] */
+  --radius-sm: 8px;            /* 버튼이나 작은 이력 카드 */
+  --radius-md: 14px;           /* 중간 크기 인풋 박스 */
+  --radius-lg: 22px;           /* 커다란 콘텐츠 박스 */
+  --radius-xl: 30px;           /* 대형 히어로 보드 */
+  --radius-full: 9999px;       /* 알약 형태의 완전한 원형 버튼 */
+  --max-width: 1240px;         /* 화면이 양옆으로 과도하게 찢어지는 것을 막는 최대 너비 제한 */
+  --nav-height: 72px;          /* 상단 고정 헤더바의 세로 높이 */
 
-  /* Transitions */
+  /* [화면 움직임 시간 제어 (Transitions)] */
   --transition-fast: 0.18s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* 튕기는 듯한 탄력감 있는 애니메이션 곡선 */
 }
 
-/* --- Dark Theme Tokens --- */
+/* --------------------------------------------------------------------------
+   2. 다크 테마용 변수 정의 (Dark Theme Tokens Override)
+   --------------------------------------------------------------------------
+   [data-theme="dark"]: 
+   자바스크립트가 html 태그의 data-theme 값을 'dark'로 변경하면, 
+   아래의 다크 전용 색상 변수값들이 기존 라이트 모드 변수명 위에 그대로 덮어씌워집니다.
+*/
 [data-theme="dark"] {
-  --bg-primary: #0b0f17;
-  --bg-secondary: #121824;
-  --bg-tertiary: #1a2232;
+  --bg-primary: #0b0f17;       /* 짙은 남색에 가까운 어두운 배경 */
+  --bg-secondary: #121824;     /* 카드 바닥을 채울 미세하게 연한 어둠 */
+  --bg-tertiary: #1a2232;      /* 텍스트창 전용 깊은 배경 */
   --bg-card: rgba(18, 24, 36, 0.8);
   --bg-card-hover: rgba(26, 34, 50, 0.95);
-  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color: rgba(255, 255, 255, 0.08); /* 어두운 배경에 맞는 흐릿한 백색선 */
   --border-focus: #fbbf24;
 
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #64748b;
-  --text-inverse: #0f172a;
+  --text-primary: #f8fafc;     /* 야간 모드용 하얀 글자색 */
+  --text-secondary: #cbd5e1;   /* 밝은 회색 글자 */
+  --text-muted: #64748b;       /* 연회색 */
+  --text-inverse: #0f172a;     /* 노란 버튼 위에 올라갈 검은 글자색 */
 
-  --brand-primary: #fbbf24;
+  --brand-primary: #fbbf24;    /* 다크모드에서 시인성이 더욱 향상된 레몬 옐로우 */
   --brand-primary-hover: #f59e0b;
   --brand-secondary: #f472b6;
   --brand-gradient: linear-gradient(135deg, #fbbf24 0%, #f472b6 100%);
@@ -87,72 +106,85 @@
   --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
-/* --- Global Reset & Base Setup --- */
+/* --------------------------------------------------------------------------
+   3. 글로벌 Reset & 브라우저 기본 레이아웃 오차 초기화
+   --------------------------------------------------------------------------
+*/
+/* *: 모든 태그를 선택하고, ::before/::after 가상 요소까지 포함시킵니다. */
 *, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  box-sizing: border-box; /* 패딩과 테두리 두께가 더해져도 원래 정의한 width/height를 유지하는 핵심 박스 모델 */
+  margin: 0;              /* 브라우저가 제각각 부여하는 바깥 여백 초기화 */
+  padding: 0;             /* 브라우저 내부 안쪽 여백 초기화 */
 }
 
 html {
-  scroll-behavior: smooth;
-  font-size: 16px;
+  scroll-behavior: smooth; /* #home 같은 앵커 링크 클릭 시 부드럽게 미끄러지며 스크롤링되는 속성 */
+  font-size: 16px;         /* 반응형 여백 단위인 rem의 기준이 되는 최상위 폰트 크기 지정 (1rem = 16px) */
 }
 
 body {
+  /* 영어와 한국어 폰트를 우선순위별로 차례대로 결합하여 최상의 디자인 폰트를 설정합니다. */
   font-family: 'Outfit', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.65;
+  line-height: 1.65;       /* 문장 행간을 넓혀 가독성을 높입니다. */
+  /* 테마 전환 시 배경과 글자색이 뚝 끊기지 않고 0.3초 동안 스무스하게 젖어들듯 변하게 만듭니다. */
   transition: background-color var(--transition-normal), color var(--transition-normal);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;      /* 가로축으로 화면 바깥을 뚫고 삐져나가는 불필요한 스크롤 바를 강제 방어 */
+  -webkit-font-smoothing: antialiased; /* 글꼴의 경계면을 부드럽게 뭉개 가독성을 극대화 */
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+  color: inherit;          /* 부모의 색상을 그대로 상속받습니다. */
+  text-decoration: none;   /* 하이퍼링크의 기본 촌스러운 밑줄 해제 */
 }
 
 button, input, select, textarea {
-  font-family: inherit;
+  font-family: inherit;    /* 브라우저 깡통 서체 대신 body 서체 강제 상속 */
   font-size: inherit;
   color: inherit;
 }
 
 img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+  max-width: 100%;         /* 부모 컨테이너 크기보다 사진이 뚱뚱해져서 튀어나오는 현상 차단 */
+  height: auto;            /* 가로 비율에 맞춰 세로 비율을 오토 계산해 찌그러짐을 없앱니다. */
+  display: block;          /* <img> 태그 주변에 미세하게 남는 인라인 여백 버그를 완벽 해결 */
 }
 
-/* --- Utility Classes --- */
+/* --------------------------------------------------------------------------
+   4. 웹 전역에서 반복 재사용하는 공통 유틸리티 클래스 (Utility Classes)
+   --------------------------------------------------------------------------
+*/
+/* .container: 화면의 중심부를 맞추고 최대 가로폭을 제한하는 틀 */
 .container {
   max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 1.5rem;
+  margin: 0 auto;          /* 가로축 좌우 마진을 자동으로 균등 분할해 화면의 가운데로 배치 */
+  padding: 0 1.5rem;       /* 화면이 작아졌을 때 양끝 테두리와 텍스트가 달라붙지 않게 하는 마진 범퍼 */
 }
 
+/* .gradient-text: 텍스트에 오렌지-핑크 그라데이션 색상을 예쁘게 입히는 문법 */
 .gradient-text {
   background: var(--brand-gradient);
-  -webkit-background-clip: text;
+  -webkit-background-clip: text; /* 배경색을 오직 글자 모양 안쪽에만 채워 자릅니다. */
   background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: transparent; /* 본래 글자색 채우기를 투명화하여 배경 그라데이션이 비춰보이게 합니다. */
   display: inline-block;
 }
 
+/* .glass-panel: 유리 뒷배경을 은은하게 뭉개는 글래스모피즘(Glassmorphism) 스타일 */
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);         /* 뒷면 요소들을 포토샵 효과처럼 뽀얗게 흐리는 필터 */
+  -webkit-backdrop-filter: blur(14px); /* 사파리 브라우저 호환성 지원 */
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   transition: all var(--transition-normal);
 }
 
+/* .badge: 소형 명찰 태그 스타일 */
 .badge {
-  display: inline-flex;
+  display: inline-flex;    /* 여러 개의 뱃지가 나란히 오되 수직 정렬 정렬이 정밀하게 먹히도록 설정 */
   align-items: center;
   gap: 0.4rem;
   padding: 0.35rem 0.85rem;
@@ -173,9 +205,12 @@ img {
 .badge-danger { background: var(--danger-bg); color: var(--danger); }
 .badge-info { background: var(--info-bg); color: var(--info); }
 
-/* --- Header & Navigation --- */
+/* --------------------------------------------------------------------------
+   5. 상단 헤더 및 내비게이션 바 레이아웃 (Header & Navigation)
+   --------------------------------------------------------------------------
+*/
 .navbar {
-  position: fixed;
+  position: fixed;         /* 스크롤을 끝까지 내리더라도 상단 맨 위에 고정(fixed)되어 화면에 따라다니게 만듭니다. */
   top: 0;
   left: 0;
   right: 0;
@@ -184,15 +219,15 @@ img {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-color);
-  z-index: 1000;
+  z-index: 1000;           /* 본문 이미지나 어떤 지도 레이아웃보다 최상위에 떠 있도록 입체 계층 순위 지정 */
   transition: all var(--transition-normal);
 }
 
 .navbar .container {
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex;           /* 가로 나열 정렬 */
+  align-items: center;     /* 수직 중앙 정렬 */
+  justify-content: space-between; /* 로고와 메뉴 항목들을 양끝 구석으로 밀어서 넓혀 섭외 */
 }
 
 .nav-brand {
@@ -206,13 +241,15 @@ img {
 
 .brand-icon {
   font-size: 1.6rem;
+  /* animation: gentle-wag 키프레임을 실행하여 2.5초마다 강아지가 꼬리를 귀엽게 흔들게 만듭니다. */
   animation: gentle-wag 2.5s infinite ease-in-out;
 }
 
+/* [강아지 아이콘 꼬리 흔들기 애니메이션 정의] */
 @keyframes gentle-wag {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-8deg); }
-  75% { transform: rotate(8deg); }
+  0%, 100% { transform: rotate(0deg); }   /* 원위치 */
+  25% { transform: rotate(-8deg); }       /* 좌측 꼬리 굽힘 */
+  75% { transform: rotate(8deg); }        /* 우측 꼬리 굽힘 */
 }
 
 .nav-menu {
@@ -234,20 +271,21 @@ img {
   color: var(--brand-primary);
 }
 
+/* 메뉴 밑에 슥 나타나는 세련된 디자인 가로선 언더바 효과 (가상 요소 활용) */
 .nav-link::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0%;
+  width: 0%;               /* 처음엔 안 보이게 가로 너비 0% 셋팅 */
   height: 2px;
   background: var(--brand-gradient);
-  transition: width var(--transition-normal);
+  transition: width var(--transition-normal); /* 너비가 0%에서 100%로 커지는 변환 과정을 부드럽게 지정 */
   border-radius: 2px;
 }
 
 .nav-link:hover::after, .nav-link.active::after {
-  width: 100%;
+  width: 100%;             /* 마우스를 올리면 100% 가로선을 다 채웁니다. */
 }
 
 .nav-actions {
@@ -271,13 +309,13 @@ img {
 }
 
 .theme-toggle-btn:hover {
-  transform: rotate(20deg) scale(1.05);
+  transform: rotate(20deg) scale(1.05); /* 마우스를 대면 20도 회전하면서 조금 빵빵해집니다 */
   background: var(--brand-gradient-soft);
   border-color: var(--brand-primary);
 }
 
 .mobile-menu-btn {
-  display: none;
+  display: none;           /* 모바일 전용이므로 PC 가로 넓은 모드에서는 화면에서 숨깁니다. */
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -285,7 +323,10 @@ img {
   cursor: pointer;
 }
 
-/* --- Buttons --- */
+/* --------------------------------------------------------------------------
+   6. 버튼 디자인 컴포넌트 (Buttons)
+   --------------------------------------------------------------------------
+*/
 .btn {
   display: inline-flex;
   align-items: center;
@@ -307,9 +348,9 @@ img {
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px var(--brand-glow);
-  filter: brightness(1.05);
+  transform: translateY(-2px); /* 호버 시 아주 미세하게 상단으로 2픽셀 부유 */
+  box-shadow: 0 8px 22px var(--brand-glow); /* 그림자가 넓고 짙어져 더욱 공중에 뜬 느낌을 줍니다 */
+  filter: brightness(1.05);    /* 호버 시 살짝 발광 */
 }
 
 .btn-secondary {
@@ -345,9 +386,12 @@ img {
   font-size: 1.1rem;
 }
 
-/* --- Hero Section --- */
+/* --------------------------------------------------------------------------
+   7. 히어로 웰컴 영역 디자인 (Hero Section)
+   --------------------------------------------------------------------------
+*/
 .hero-section {
-  padding-top: calc(var(--nav-height) + 4rem);
+  padding-top: calc(var(--nav-height) + 4rem); /* 메뉴바 뒤로 컨텐츠가 가려 깔리지 않게 위 여백 강제 */
   padding-bottom: 5rem;
   position: relative;
   overflow: hidden;
@@ -359,11 +403,12 @@ img {
   right: -100px;
   width: 600px;
   height: 600px;
+  /* radial-gradient: 둥근 그라데이션을 퍼트려 네온 오로라 분위기를 연출합니다 */
   background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, rgba(236, 72, 153, 0.08) 50%, transparent 70%);
   border-radius: 50%;
-  pointer-events: none;
+  pointer-events: none;    /* 마우스 클릭 등의 이벤트를 통과시켜 뒷 컨텐츠 작동 방해 차단 */
   z-index: 0;
-  filter: blur(40px);
+  filter: blur(40px);      /* 원 테두리를 부드럽게 뭉갭니다 */
 }
 
 .hero-content {
@@ -375,6 +420,7 @@ img {
 }
 
 .hero-title {
+  /* clamp: 디바이스 가로폭에 따라 폰트 크기가 최소 2.3rem에서 최대 3.8rem 사이에서 유기적 수축 반응 */
   font-size: clamp(2.3rem, 5vw, 3.8rem);
   font-weight: 800;
   line-height: 1.2;
@@ -399,7 +445,7 @@ img {
 }
 
 .hero-stats {
-  display: grid;
+  display: grid;           /* 3개의 요소를 그리드 바둑판식 배열로 균등 할당 */
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   max-width: 700px;
@@ -426,7 +472,10 @@ img {
   color: var(--text-muted);
 }
 
-/* --- Section Layout --- */
+/* --------------------------------------------------------------------------
+   8. 각 섹션 공통 헤더 타이틀 (Section Layout)
+   --------------------------------------------------------------------------
+*/
 .section {
   padding: 5.5rem 0;
   position: relative;
@@ -450,21 +499,25 @@ img {
   font-size: 1.05rem;
 }
 
-/* --- AI Analysis Studio Section --- */
+/* --------------------------------------------------------------------------
+   9. AI 감정 분석 스튜디오 구역 디자인 (AI Analysis Studio Section)
+   --------------------------------------------------------------------------
+*/
 .analysis-layout {
-  display: grid;
+  display: grid;           /* 2차원 격자 레이아웃 실행 */
+  /* 가로 너비 비율을 1 : 1.15 크기로 조율하여 좌우 두 칸으로 딱 나누어 배치합니다 */
   grid-template-columns: 1fr 1.15fr;
   gap: 2.5rem;
-  align-items: start;
+  align-items: start;      /* 두 칸의 높이가 서로 달라도 위에 붙어서 렌더링되게 처리 */
 }
 
 .input-card, .result-card {
   padding: 2.2rem;
 }
 
-/* Upload Box */
+/* [드롭존 박스 (Upload Box)] */
 .upload-dropzone {
-  border: 2px dashed var(--border-color);
+  border: 2px dashed var(--border-color); /* 점선 테두리 */
   border-radius: var(--radius-md);
   padding: 2.2rem 1.5rem;
   text-align: center;
@@ -478,7 +531,7 @@ img {
 
 .upload-dropzone:hover, .upload-dropzone.dragover {
   border-color: var(--brand-primary);
-  background: var(--brand-gradient-soft);
+  background: var(--brand-gradient-soft); /* 호버 또는 파일 드래그 시 오렌지 파스텔로 변환 */
   transform: scale(1.01);
 }
 
@@ -489,6 +542,7 @@ img {
   transition: transform var(--transition-bounce);
 }
 
+/* 드래그 호버 시 카메라 이모티콘이 살짝 위로 동실 떠오르는 모션 */
 .upload-dropzone:hover .upload-icon {
   transform: translateY(-4px) scale(1.1);
 }
@@ -503,13 +557,14 @@ img {
   color: var(--text-muted);
 }
 
+/* [이미지 프리뷰 (Image Preview Box)] */
 .preview-container {
   position: relative;
   width: 100%;
   height: 240px;
   border-radius: var(--radius-md);
   overflow: hidden;
-  display: none;
+  display: none;           /* 기본값은 숨김, 사진 로드 시 JS에서 display: block 전환 */
   background: #000;
   margin-bottom: 1.5rem;
   box-shadow: var(--shadow-md);
@@ -518,12 +573,12 @@ img {
 .preview-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover;       /* 사진 비율이 달라도 가로세로 틀에 맞추어 꽉 차게 잘라 표시 */
   transition: transform 0.5s ease;
 }
 
 .btn-remove-img {
-  position: absolute;
+  position: absolute;      /* 프리뷰 사진 우측 상단 모서리에 고정 */
   top: 10px;
   right: 10px;
   background: rgba(0, 0, 0, 0.7);
@@ -540,10 +595,10 @@ img {
 }
 
 .btn-remove-img:hover {
-  background: var(--danger);
+  background: var(--danger); /* 호버 시 빨강으로 발광 */
 }
 
-/* Sample Dogs Selector */
+/* [샘플 사전 입력 패널 (Sample Dogs Selector)] */
 .sample-section {
   margin-bottom: 1.8rem;
 }
@@ -605,7 +660,7 @@ img {
   color: var(--text-muted);
 }
 
-/* Form Groups */
+/* [인풋 폼 (Form Groups)] */
 .form-group {
   margin-bottom: 1.2rem;
 }
@@ -630,12 +685,12 @@ img {
 
 .form-input:focus, .form-select:focus {
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px var(--brand-glow);
+  box-shadow: 0 0 0 3px var(--brand-glow); /* 포커스 시 테두리에 광원 반사 네온 효과 */
 }
 
 .situation-chips {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap;         /* 화면이 좁으면 해시태그 칩들이 다음 줄로 밀려 내려오게 설정 */
   gap: 0.45rem;
   margin-top: 0.5rem;
 }
@@ -657,7 +712,11 @@ img {
   border-color: var(--brand-primary);
 }
 
-/* Result Card State Handling */
+/* --------------------------------------------------------------------------
+   10. 결과 노출 패널 상태별 디자인 (Result Card States)
+   --------------------------------------------------------------------------
+*/
+/* 대기 상태 */
 .result-placeholder {
   text-align: center;
   padding: 4rem 1.5rem;
@@ -670,14 +729,16 @@ img {
   opacity: 0.6;
 }
 
+/* 분석 중 (로딩 엔진) */
 .loading-state {
-  display: none;
+  display: none;           /* 기본값 숨김, 분석 시작 시 JS가 활성화 */
   text-align: center;
   padding: 3.5rem 1.5rem;
 }
 
 .paw-spinner {
   font-size: 3rem;
+  /* pulse-spin: 1.5초마다 커지면서 회전하는 애니메이션 */
   animation: pulse-spin 1.5s infinite ease-in-out;
   display: inline-block;
   margin-bottom: 1.2rem;
@@ -700,10 +761,10 @@ img {
   color: var(--text-muted);
 }
 
-/* Result Presentation */
+/* [분석 완료 최종 렌더링 화면] */
 .result-content {
   display: none;
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.4s ease-out; /* 분석 완료 시 아래에서 톡 튕겨져 올라오며 선명해지는 효과 */
 }
 
 @keyframes fadeIn {
@@ -739,7 +800,7 @@ img {
 .emotion-name-en {
   font-size: 0.85rem;
   color: var(--text-muted);
-  text-transform: uppercase;
+  text-transform: uppercase; /* 영어 알파벳 소문자를 일괄 대문자로 강제 강압 */
   letter-spacing: 0.05em;
 }
 
@@ -758,6 +819,7 @@ img {
   color: var(--text-muted);
 }
 
+/* 신뢰도 게이지 바 배경 */
 .confidence-bar-bg {
   width: 100%;
   height: 8px;
@@ -767,9 +829,10 @@ img {
   margin: 0.5rem 0 1.5rem 0;
 }
 
+/* 실시간으로 차오르는 게이지 막대 */
 .confidence-bar-fill {
   height: 100%;
-  width: 0%;
+  width: 0%;               /* JS 시작 시 0%에서 시작해 1초에 걸쳐 타겟수치까지 차오름 */
   background: var(--brand-gradient);
   border-radius: var(--radius-full);
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -777,7 +840,7 @@ img {
 
 .summary-quote {
   background: var(--brand-gradient-soft);
-  border-left: 4px solid var(--brand-primary);
+  border-left: 4px solid var(--brand-primary); /* 인용구 왼쪽에 주황색 강조 막대 긋기 */
   padding: 1rem 1.2rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-weight: 500;
@@ -785,10 +848,10 @@ img {
   font-size: 1.02rem;
 }
 
-/* 4-Cues Observation Grid */
+/* 신체 4개 관찰 그리드 */
 .cues-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr); /* 2열 균등 배치 */
   gap: 0.85rem;
   margin-bottom: 1.8rem;
 }
@@ -816,7 +879,7 @@ img {
   line-height: 1.45;
 }
 
-/* Recommendations & Precautions */
+/* 처방 가이드 및 주의사항 공통 블록 */
 .result-block {
   margin-bottom: 1.5rem;
 }
@@ -857,7 +920,7 @@ img {
   align-items: flex-start;
   gap: 0.5rem;
   font-size: 0.875rem;
-  background: var(--danger-bg);
+  background: var(--danger-bg); /* 주의해야 할 내용이므로 옅은 투명 빨강을 적용 */
   color: var(--text-primary);
   padding: 0.6rem 0.8rem;
   border-radius: var(--radius-sm);
@@ -876,7 +939,10 @@ img {
   padding-top: 1.2rem;
 }
 
-/* --- Emotion Guide Encyclopedia --- */
+/* --------------------------------------------------------------------------
+   11. 감정 백과 도감 구역 디자인 (Encyclopedia Section)
+   --------------------------------------------------------------------------
+*/
 .guide-filter-tabs {
   display: flex;
   justify-content: center;
@@ -905,6 +971,8 @@ img {
 
 .guide-cards-grid {
   display: grid;
+  /* auto-fit minmax: 카드 한 장 크기가 최소 320px 아래로 구겨지기 시작하면 
+                    그리드가 알아서 열 개수를 조절해 다음 줄로 내려줍니다 (최고의 반응형) */
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.5rem;
 }
@@ -954,7 +1022,7 @@ img {
   border-radius: var(--radius-sm);
   font-size: 0.825rem;
   margin-bottom: 1rem;
-  flex-grow: 1;
+  flex-grow: 1;            /* 카드마다 텍스트 양이 달라도 아래 팁박스 라인이 아래로 칼정렬되게 밀어주는 힘 */
 }
 
 .guide-signals-title {
@@ -964,13 +1032,16 @@ img {
 }
 
 .guide-tips-box {
-  border-top: 1px dashed var(--border-color);
+  border-top: 1px dashed var(--border-color); /* 점선 구분선 */
   padding-top: 0.8rem;
   font-size: 0.825rem;
   color: var(--text-secondary);
 }
 
-/* --- History Section --- */
+/* --------------------------------------------------------------------------
+   12. 분석 기록 이력 구역 디자인 (LocalStorage History Section)
+   --------------------------------------------------------------------------
+*/
 .history-header-actions {
   display: flex;
   justify-content: space-between;
@@ -1038,10 +1109,13 @@ img {
   text-align: center;
   padding: 3rem 1rem;
   color: var(--text-muted);
-  grid-column: 1 / -1;
+  grid-column: 1 / -1;      /* 비어있을 때는 가로 셀을 통째로 혼자 가로지르며 중앙 정렬하게 설정 */
 }
 
-/* --- FAQ Accordion Section --- */
+/* --------------------------------------------------------------------------
+   13. 자주 묻는 질문 아코디언 컴포넌트 디자인 (FAQ Accordion)
+   --------------------------------------------------------------------------
+*/
 .faq-accordion {
   max-width: 800px;
   margin: 0 auto;
@@ -1083,26 +1157,32 @@ img {
   transition: transform var(--transition-normal);
 }
 
+/* 아코디언이 열리면(active) 화살표를 아래에서 위로 180도 부드럽게 꼬아 엎습니다 */
 .faq-item.active .faq-icon {
   transform: rotate(180deg);
 }
 
+/* 처음에는 답변창을 가로막고 0px 높이로 가두는 CSS 처리 */
 .faq-answer {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.35s ease-out, padding 0.35s ease-out;
+  transition: max-height 0.35s ease-out, padding 0.35s ease-out; /* 스르륵 미끄러지며 노출 */
   padding: 0 1.5rem;
   color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.6;
 }
 
+/* 아코디언 오픈 시 높이를 250px 한도로 늘려 내용물을 뿜게 만듭니다 */
 .faq-item.active .faq-answer {
   max-height: 250px;
   padding: 0 1.5rem 1.4rem 1.5rem;
 }
 
-/* --- About Section --- */
+/* --------------------------------------------------------------------------
+   14. 회사/서비스 배경 소개 영역 디자인 (About Section)
+   --------------------------------------------------------------------------
+*/
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1148,7 +1228,10 @@ img {
   font-size: 0.8rem;
 }
 
-/* --- Toast Notification System --- */
+/* --------------------------------------------------------------------------
+   15. 우측 하단 팝업 토스트 알림창 디자인 (Toast Notification System)
+   --------------------------------------------------------------------------
+*/
 .toast-container {
   position: fixed;
   bottom: 25px;
@@ -1157,7 +1240,7 @@ img {
   flex-direction: column;
   gap: 10px;
   z-index: 9999;
-  pointer-events: none;
+  pointer-events: none;    /* 뒷 배경 클릭 마우스 작동 흐름에 영향을 끼치지 않게 완전 투명화 */
 }
 
 .toast {
@@ -1174,11 +1257,12 @@ img {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  pointer-events: auto;
+  pointer-events: auto;    /* 토스트를 직접 마우스로 잡거나 조작하는 것은 허가 */
   animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   max-width: 380px;
 }
 
+/* 오른쪽 밖 화면에서 스윽 튀어 올라 안착하는 팝업 애니메이션 */
 @keyframes slideInRight {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
@@ -1194,7 +1278,10 @@ img {
   border-left: 4px solid var(--warning);
 }
 
-/* --- Footer --- */
+/* --------------------------------------------------------------------------
+   16. 하단 바닥 정보 디자인 (Footer)
+   --------------------------------------------------------------------------
+*/
 .footer {
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
@@ -1264,22 +1351,32 @@ img {
   font-size: 0.75rem;
 }
 
-/* --- Responsive Media Queries --- */
+/* --------------------------------------------------------------------------
+   17. 반응형 웹 미디어 쿼리 (Responsive Mobile Breakpoints)
+   --------------------------------------------------------------------------
+*/
+
+/* [1차 중단점: 가로 1024px 이하 (아이패드, 태블릿 화면 대응)] */
 @media (max-width: 1024px) {
+  /* 2열로 나란히 있던 좌/우 스튜디오 패널을 아래로 한 열씩 쌓이게(1열) 재정렬합니다 */
   .analysis-layout {
     grid-template-columns: 1fr;
   }
   
+  /* 서비스 소개 구역 1열 정렬 */
   .about-grid {
     grid-template-columns: 1fr;
   }
   
+  /* 풋터 구역 정렬 수정 */
   .footer-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
+/* [2차 중단점: 가로 768px 이하 (아이폰, 갤럭시 등 모바일 스마트폰 화면 대응)] */
 @media (max-width: 768px) {
+  /* 상단 메뉴 목록들을 화면에서 완전히 숨기고, 모바일 햄버거 오픈 시에만 display: flex 되도록 유도 */
   .nav-menu {
     display: none;
     position: fixed;
@@ -1296,26 +1393,30 @@ img {
   }
 
   .nav-menu.show {
-    display: flex;
+    display: flex;         /* 햄버거 ✕ 활성화 시 모바일 메뉴 오픈 */
   }
 
   .mobile-menu-btn {
-    display: block;
+    display: block;        /* PC 모드에서 숨겼던 ☰ 버튼을 비로소 노출시킵니다 */
   }
 
+  /* 히어로 통계 영역 1줄로 정렬 */
   .hero-stats {
     grid-template-columns: 1fr;
     gap: 0.8rem;
   }
 
+  /* 샘플 강아지 버튼 그리드 1줄 수직 적재 */
   .sample-grid {
     grid-template-columns: 1fr;
   }
 
+  /* 신체 관찰 4구역 그리드 1줄 수직 적재 */
   .cues-grid {
     grid-template-columns: 1fr;
   }
 
+  /* 바닥글 영역을 모바일에 맞춰 심플 1열로 붕괴 */
   .footer-grid {
     grid-template-columns: 1fr;
     gap: 2rem;

@@ -1,33 +1,55 @@
+<!-- 
+  ==========================================================================
+  PawEmotion AI - 메인 웹페이지 레이아웃 (HTML5 Document)
+  ==========================================================================
+  이 파일은 브라우저 화면의 뼈대를 이루는 마크업 구조입니다.
+  CSS(디자인)와 JavaScript(동작) 파일들을 연동하여 전체 화면을 구성합니다.
+-->
 <!DOCTYPE html>
+<!-- 한국어(ko)를 기본 언어로 설정하며, 테마 모드의 기본값을 라이트(light) 모드로 지정합니다. -->
 <html lang="ko" data-theme="light">
 <head>
+  <!-- 모든 언어와 이모지가 정상 출력되도록 인코딩 형식을 설정합니다. -->
   <meta charset="UTF-8">
+  <!-- viewport: 모바일, 태블릿, PC 등 다양한 스마트 기기 기종에 맞추어 화면 크기가 자동으로 최적화되도록 조절하는 반응형 설정입니다. -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- [SEO: 검색엔진 최적화 영역] -->
   <title>PawEmotion AI - 반려견 사진 기반 AI 감정 분석 & 행동 가이드</title>
+  <!-- description: 구글이나 네이버 같은 검색 사이트에 우리 웹페이지가 검색되었을 때, 제목 밑에 보여줄 한 줄 요약 소개문입니다. -->
   <meta name="description" content="반려견의 표정과 신체 언어를 AI Vision 기술로 정밀 분석하여 현재 감정 상태와 보호자를 위한 맞춤형 행동 가이드를 제공합니다.">
+  <!-- keywords: 페이지와 관련된 핵심 검색 키워드들을 나열하여 검색 인덱싱에 가중치를 둡니다. -->
   <meta name="keywords" content="반려견 감정분석, AI 펫케어, 강아지 행동학, 강아지 표정 분석, PawEmotion AI, 펫테크">
+  
+  <!-- [SNS 공유 시 화면 최적화를 위한 Open Graph 메타 태그] -->
+  <!-- 카카오톡, 페이스북 등에 링크 주소를 붙여넣었을 때 자동으로 이쁘게 나타나는 프리뷰 박스의 내용들을 제어합니다. -->
   <meta property="og:title" content="PawEmotion AI - 반려견 사진 기반 AI 감정 분석 서비스">
   <meta property="og:description" content="사진 한 장으로 읽는 우리 아이의 마음! AI 기반 반려견 감정 분석 및 행동 처방 가이드">
   <meta property="og:type" content="website">
 
-  <!-- Favicon -->
+  <!-- Favicon: 브라우저 탭 창에 노출되는 소형 아이콘입니다. 여기선 파일 없이 🐾 이모지를 SVG 포맷으로 변환해 직접 출력하고 있습니다. -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
 
-  <!-- Stylesheet -->
+  <!-- Stylesheet: 외부 CSS 파일을 연동하여 디자인 옷을 입힙니다. -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- ================= Navigation Bar ================= -->
+  <!-- ================= [1. 상단 내비게이션 바 영역 (Header)] ================= -->
+  <!-- header 태그는 페이지 맨 위에 고정되는 사이트 소개 및 메뉴 영역에 사용되는 시맨틱(Semantic) 태그입니다. -->
   <header class="navbar">
     <div class="container">
+      <!-- 서비스 로고 링크 -->
       <a href="#home" class="nav-brand">
+        <!-- brand-icon에는 CSS에서 꼬리가 흔들리는(gentle-wag) 애니메이션이 입혀집니다. -->
         <span class="brand-icon">🐾</span>
         <span>Paw<span class="gradient-text">Emotion</span> AI</span>
       </a>
 
+      <!-- 상단 내비게이션 메뉴 목록 -->
       <nav>
         <ul class="nav-menu" id="navMenu">
+          <!-- 각 메뉴 클릭 시 해당하는 섹션의 ID 위치로 화면이 부드럽게 스크롤링됩니다 (CSS scroll-behavior: smooth 참고). -->
           <li><a href="#home" class="nav-link active">홈</a></li>
           <li><a href="#analysis" class="nav-link">AI 감정 분석</a></li>
           <li><a href="#guide" class="nav-link">감정 도감</a></li>
@@ -37,36 +59,50 @@
         </ul>
       </nav>
 
+      <!-- 우측 기능 버튼 모음 -->
       <div class="nav-actions">
+        <!-- themeToggleBtn: 다크모드와 라이트모드를 실시간 전환하는 버튼입니다. -->
         <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="테마 전환" title="다크/라이트 모드 전환">
           <span id="themeIcon">🌙</span>
         </button>
+        <!-- 지금 분석하기 바로가기 액션 버튼 -->
         <a href="#analysis" class="btn btn-primary btn-sm">지금 분석하기</a>
+        <!-- mobileMenuBtn: 모바일 환경에서 화면이 좁아질 때 화면 우측에 뜨는 햄버거 형태(☰)의 전체 메뉴 펼치기 버튼입니다. -->
         <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="모바일 메뉴 열기">☰</button>
       </div>
     </div>
   </header>
 
+  <!-- ================= [2. 본문 컨텐츠 영역 (Main Content)] ================= -->
+  <!-- main 태그는 웹페이지에서 단 한 번만 쓸 수 있으며, 가장 주된 핵심 컨텐츠 영역임을 나타내는 시맨틱 태그입니다. -->
   <main>
-    <!-- ================= Hero Section ================= -->
+    
+    <!-- ------------------------------------------------------------------------
+         Hero Section: 첫인상을 결정하는 서비스 대문 영역
+         ------------------------------------------------------------------------ -->
     <section id="home" class="hero-section">
+      <!-- hero-background-shapes: CSS에서 은은하게 회전 및 번지는 색상 원 디자인 배경을 담당하는 요소입니다. -->
       <div class="hero-background-shapes"></div>
       <div class="container">
         <div class="hero-content">
+          <!-- 뱃지 형태의 강조 키워드 박스 -->
           <div class="badge badge-primary">
             <span>✨ AI Vision x 동물행동학 결합 펫테크 솔루션</span>
           </div>
 
+          <!-- 메인 타이틀 (h1 태그는 한 페이지 내에 단 한 번만 명시하는 것을 SEO 규칙으로 삼습니다) -->
           <h1 class="hero-title">
             사진 한 장으로 읽는<br>
             <span class="gradient-text">우리 반려견의 진짜 속마음</span>
           </h1>
 
+          <!-- 서비스 서브 소개글 -->
           <p class="hero-subtitle">
             말 못 하는 우리 강아지, 지금 정말 행복한 걸까요?<br>
             눈, 귀, 입, 자세 등 미세한 신체 언어를 AI가 종합 분석하고 보호자 맞춤 행동 가이드를 처방해 드립니다.
           </p>
 
+          <!-- 액션 실행 유도 버튼 그룹 -->
           <div class="hero-cta-group">
             <a href="#analysis" class="btn btn-primary btn-lg">
               <span>🐶 무료 감정 분석 시작</span>
@@ -75,6 +111,7 @@
             <a href="#guide" class="btn btn-secondary btn-lg">감정 도감 둘러보기</a>
           </div>
 
+          <!-- 간단한 통계 및 성과 수치 요약 영역 -->
           <div class="hero-stats">
             <div class="stat-item glass-panel">
               <div class="stat-number">6대</div>
@@ -93,28 +130,35 @@
       </div>
     </section>
 
-    <!-- ================= AI Analysis Studio Section ================= -->
+    <!-- ------------------------------------------------------------------------
+         AI Analysis Studio Section: 사진을 분석하고 결과를 띄우는 핵심 스튜디오
+         ------------------------------------------------------------------------ -->
     <section id="analysis" class="section">
       <div class="container">
+        <!-- 섹션 해더 안내판 -->
         <div class="section-header">
           <div class="badge badge-primary">AI ANALYSIS STUDIO</div>
           <h2 class="section-title">반려견 AI 감정 분석 스튜디오</h2>
           <p class="section-desc">강아지의 선명한 사진을 업로드하거나 준비된 샘플로 AI 감정 진단을 바로 체험해보세요.</p>
         </div>
 
+        <!-- 2열 구조의 분석 레이아웃 (왼쪽: 사진 및 정보 입력 / 오른쪽: 실시간 결과 출력) -->
         <div class="analysis-layout">
-          <!-- Input Card -->
+          
+          <!-- [왼쪽 카드: 입력 폼 (Input Card)] -->
           <div class="input-card glass-panel">
             <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
               <span>📸</span> 사진 업로드 & 정보 입력
             </h3>
 
-            <!-- 1-Click Sample Dogs -->
+            <!-- 1) 원클릭 샘플 강아지 사전 입력 영역 -->
+            <!-- 초보자가 자신의 반려견 사진이 없더라도 빠르게 테스트할 수 있게 이미 준비된 견종별 세팅 데이터를 로드합니다. -->
             <div class="sample-section">
               <div class="sample-title">
                 <span>💡</span> 샘플 사진으로 바로 체험하기:
               </div>
               <div class="sample-grid">
+                <!-- 리트리버 샘플 버튼 -->
                 <button type="button" class="sample-btn" data-sample="happy">
                   <img src="images/sample_happy.jpg" alt="행복한 리트리버" class="sample-thumb">
                   <div class="sample-info">
@@ -122,6 +166,7 @@
                     <span class="sample-tag">#행복 #놀이</span>
                   </div>
                 </button>
+                <!-- 시바견 샘플 버튼 -->
                 <button type="button" class="sample-btn" data-sample="alert">
                   <img src="images/sample_alert.jpg" alt="경계하는 시바견" class="sample-thumb">
                   <div class="sample-info">
@@ -129,6 +174,7 @@
                     <span class="sample-tag">#경계 #집중</span>
                   </div>
                 </button>
+                <!-- 말티즈 샘플 버튼 -->
                 <button type="button" class="sample-btn" data-sample="relaxed">
                   <img src="images/sample_relaxed.jpg" alt="편안한 말티즈" class="sample-thumb">
                   <div class="sample-info">
@@ -139,21 +185,24 @@
               </div>
             </div>
 
-            <!-- Drag & Drop Upload Zone -->
+            <!-- 2) 드래그 앤 드롭 사진 업로드 영역 (Dropzone) -->
+            <!-- 이 점선 상자 영역에 사진 파일을 직접 떨어뜨리거나 클릭하여 내 컴퓨터에서 파일을 선택할 수 있습니다. -->
             <div id="dropzone" class="upload-dropzone">
               <div class="upload-icon">📷</div>
               <div class="upload-prompt">사진을 이곳에 끌어다 놓거나 클릭하세요</div>
               <div class="upload-hint">JPG, PNG, WEBP 지원 (최대 5MB)</div>
+              <!-- fileInput: 실제 파일 찾기를 실행하는 숨겨진 인풋태그입니다. JS를 통해 Dropzone 클릭 시 대신 열리게 맵핑되어 있습니다. -->
               <input type="file" id="fileInput" accept="image/jpeg, image/png, image/webp" style="display: none;" aria-label="반려견 사진 업로드">
             </div>
 
-            <!-- Image Preview Box -->
+            <!-- 3) 업로드 성공 시 사진 미리보기가 나타나는 프레임 (초기에는 숨겨진 상태) -->
             <div id="previewContainer" class="preview-container">
               <img id="previewImage" src="" alt="업로드 미리보기" class="preview-img">
+              <!-- btnRemoveImage: 사진이 마음에 안 들어 제거하고 싶을 때 누르는 지우기 버튼 -->
               <button id="btnRemoveImage" class="btn-remove-img" title="사진 삭제">✕</button>
             </div>
 
-            <!-- Form Meta Inputs -->
+            <!-- 4) 부가 정보 입력 창 그룹 (견종, 나이) -->
             <div class="form-group">
               <label for="dogBreed" class="form-label">반려견 품종</label>
               <input type="text" id="dogBreed" class="form-input" placeholder="예: 골든 리트리버, 포메라니안, 믹스견 등">
@@ -164,10 +213,12 @@
               <input type="text" id="dogAge" class="form-input" placeholder="예: 2살, 6개월, 10살 노령견 등">
             </div>
 
+            <!-- 5) 반려견이 놓인 상황 설명 입력 창 및 간편 선택 해시태그 칩 목록 -->
             <div class="form-group">
               <label for="dogSituation" class="form-label">현재 상황 또는 환경</label>
               <input type="text" id="dogSituation" class="form-input" placeholder="예: 거실에서 휴식 중, 산책 중 낯선 개를 만남 등" value="집에서 휴식 중">
               
+              <!-- situation-chips: 누르면 텍스트창에 문구가 즉각 주입되는 칩 버튼 모음입니다. -->
               <div class="situation-chips">
                 <button type="button" class="chip-btn" data-situation="집에서 휴식 중 🛋️">집에서 휴식 🛋️</button>
                 <button type="button" class="chip-btn" data-situation="야외 산책 중 🦮">야외 산책 🦮</button>
@@ -178,14 +229,15 @@
               </div>
             </div>
 
+            <!-- 분석 시작 버튼 -->
             <button id="btnAnalyze" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
               <span>✨ AI 감정 분석 시작하기</span>
             </button>
           </div>
 
-          <!-- Result Card -->
+          <!-- [오른쪽 카드: 실시간 분석 결과 표시 영역 (Result Card)] -->
           <div class="result-card glass-panel" id="resultCard">
-            <!-- Initial Placeholder -->
+            <!-- 1) 대기 상태 (사진 올리기 전 노출되는 기본 안내판) -->
             <div id="resultPlaceholder" class="result-placeholder">
               <div class="placeholder-icon">🔍</div>
               <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">분석 대기 중</h4>
@@ -195,15 +247,17 @@
               </p>
             </div>
 
-            <!-- Loading Spinner -->
+            <!-- 2) 로딩 상태 (API 서버에 요청을 전송하고 대기하는 스피너 화면) -->
             <div id="loadingState" class="loading-state">
+              <!-- paw-spinner: CSS에서 펄스 회전 애니메이션이 입혀져 🐾 문자가 돌아가는 무한 로딩 스피너입니다. -->
               <div class="paw-spinner">🐾</div>
               <div class="loading-text">AI Vision이 사진 속 표정을 관찰하고 있습니다...</div>
               <div class="loading-subtext">눈, 귀, 입 모양 및 주변 상황 맥락을 분석 중입니다 (약 3~5초 소요)</div>
             </div>
 
-            <!-- Active Result Content -->
+            <!-- 3) 분석 결과 본문 (AI 연동이 끝난 후 비로소 활성화되는 화면) -->
             <div id="resultContent" class="result-content">
+              <!-- 결과 헤더 (감정 이모지, 감정 텍스트, 신뢰도 퍼센테이지 출력) -->
               <div class="result-header">
                 <div class="result-emotion-main">
                   <span id="resEmoji" class="emotion-big-emoji">😊</span>
@@ -218,48 +272,49 @@
                 </div>
               </div>
 
-              <!-- Confidence Progress Bar -->
+              <!-- 신뢰도 시각화 게이지 바 (JS에서 너비 width% 를 변경해 게이지를 채웁니다) -->
               <div class="confidence-bar-bg">
                 <div id="resConfidenceBar" class="confidence-bar-fill"></div>
               </div>
 
-              <!-- Summary Quote -->
+              <!-- AI 한줄 감정 요약 멘트가 들어가는 인용 블록 -->
               <div id="resSummary" class="summary-quote">
                 "현재 매우 편안하고 안정적인 심리 상태를 보이고 있습니다."
               </div>
 
-              <!-- 4-Cues Observation Grid -->
+              <!-- 신체 4개 부위(눈, 귀, 입, 몸) 관찰 결과 상세 그리드 -->
               <div class="cues-grid" id="resCuesGrid">
-                <!-- Dynamically injected cues -->
+                <!-- 자바스크립트가 AI 응답 값을 해석해 동적으로 내부 카드 조각들을 인젝션합니다. -->
               </div>
 
-              <!-- Recommendations -->
+              <!-- 보호자에게 제안하는 권장 양육 가이드 목록 -->
               <div class="result-block">
                 <div class="result-block-title">
                   <span>💡</span> 보호자를 위한 권장 행동 가이드
                 </div>
                 <ul class="action-list" id="resRecommendations">
-                  <!-- Dynamically injected -->
+                  <!-- JS에서 동적 <li> 생성 -->
                 </ul>
               </div>
 
-              <!-- Precautions -->
+              <!-- 현재 상태에서 보호자가 주의해야 할 리스크 방지 목록 -->
               <div class="result-block">
                 <div class="result-block-title">
                   <span>⚠️</span> 주의사항 및 교감 팁
                 </div>
                 <ul class="precaution-list" id="resPrecautions">
-                  <!-- Dynamically injected -->
+                  <!-- JS에서 동적 <li> 생성 -->
                 </ul>
               </div>
 
-              <!-- Result Footer Actions -->
+              <!-- 결과 하단 부가 액션 그룹 (복사, 초기화) -->
               <div class="result-footer-actions">
                 <button id="btnCopyResult" class="btn btn-secondary btn-sm" style="flex: 1;">📋 결과 복사</button>
                 <button id="btnSaveHistory" class="btn btn-outline btn-sm" style="flex: 1;">💾 기록 저장됨</button>
                 <button id="btnReset" class="btn btn-secondary btn-sm">🔄 새로 분석</button>
               </div>
 
+              <!-- 동작한 AI 엔진 출처(Gemini, GPT 등)가 노출되는 풋노트 영역 -->
               <div id="resSourceInfo" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; text-align: center;"></div>
             </div>
           </div>
@@ -267,23 +322,30 @@
       </div>
     </section>
 
-    <!-- ================= Emotion Encyclopedia / Guide Section ================= -->
+    <!-- ------------------------------------------------------------------------
+         Emotion Encyclopedia Section: 반려견 6대 감정 백과 도감
+         ------------------------------------------------------------------------ -->
     <section id="guide" class="section" style="background: var(--bg-secondary);">
       <div class="container">
+        <!-- 섹션 헤더 -->
         <div class="section-header">
           <div class="badge badge-primary">ETHOLOGY GUIDE</div>
           <h2 class="section-title">반려견 6대 감정 도감 & 신체 언어</h2>
           <p class="section-desc">반려견이 보내는 미세한 시그널(카밍 시그널)의 의미를 배우고 올바르게 교감해보세요.</p>
         </div>
 
+        <!-- 감정 종류 필터 탭 (전체보기, 긍정감정, 주의감정 버튼들) -->
         <div class="guide-filter-tabs">
           <button class="filter-tab-btn active" data-filter="all">전체 보기</button>
           <button class="filter-tab-btn" data-filter="positive">긍정적 감정 (행복/편안/놀이)</button>
           <button class="filter-tab-btn" data-filter="caution">주의·스트레스 신호 (불안/경계/두려움)</button>
         </div>
 
+        <!-- 감정 도감 상세 카드 목록 -->
+        <!-- JS 필터 클릭 시 data-category 속성을 확인하여 카드를 노출하거나 숨깁니다(display: none). -->
         <div class="guide-cards-grid">
-          <!-- Card 1: Happy -->
+          
+          <!-- [감정 카드 1: 행복] -->
           <div class="guide-card" data-category="positive">
             <div class="guide-card-header">
               <span class="guide-emoji">😊</span>
@@ -302,7 +364,7 @@
             </div>
           </div>
 
-          <!-- Card 2: Relaxed -->
+          <!-- [감정 카드 2: 편안함] -->
           <div class="guide-card" data-category="positive">
             <div class="guide-card-header">
               <span class="guide-emoji">😌</span>
@@ -321,7 +383,7 @@
             </div>
           </div>
 
-          <!-- Card 3: Playful -->
+          <!-- [감정 카드 3: 놀이] -->
           <div class="guide-card" data-category="positive">
             <div class="guide-card-header">
               <span class="guide-emoji">🎾</span>
@@ -340,7 +402,7 @@
             </div>
           </div>
 
-          <!-- Card 4: Anxious -->
+          <!-- [감정 카드 4: 불안] -->
           <div class="guide-card" data-category="caution">
             <div class="guide-card-header">
               <span class="guide-emoji">😟</span>
@@ -359,7 +421,7 @@
             </div>
           </div>
 
-          <!-- Card 5: Alert -->
+          <!-- [감정 카드 5: 경계] -->
           <div class="guide-card" data-category="caution">
             <div class="guide-card-header">
               <span class="guide-emoji">😠</span>
@@ -378,7 +440,7 @@
             </div>
           </div>
 
-          <!-- Card 6: Fear -->
+          <!-- [감정 카드 6: 두려움] -->
           <div class="guide-card" data-category="caution">
             <div class="guide-card-header">
               <span class="guide-emoji">😨</span>
@@ -400,21 +462,27 @@
       </div>
     </section>
 
-    <!-- ================= Analysis History Section ================= -->
+    <!-- ------------------------------------------------------------------------
+         Analysis History Section: 브라우저에 기록된 로컬 분석 내역들
+         ------------------------------------------------------------------------ -->
     <section id="history" class="section">
       <div class="container">
+        <!-- 섹션 헤더 -->
         <div class="section-header">
           <div class="badge badge-primary">LOCAL STORAGE HISTORY</div>
           <h2 class="section-title">최근 분석 기록</h2>
           <p class="section-desc">내 브라우저에 안전하게 저장된 최근 분석 결과들을 다시 확인해보세요.</p>
         </div>
 
+        <!-- 기록 개수 및 일괄 청소 버튼 -->
         <div class="history-header-actions">
           <span style="font-weight: 600; color: var(--text-secondary);" id="historyCount">총 0건의 기록</span>
           <button id="btnClearHistory" class="btn btn-secondary btn-sm" style="display: none;">전체 삭제</button>
         </div>
 
+        <!-- 분석 기록 카드들이 동적으로 생성되는 그리드 컨테이너 -->
         <div class="history-grid" id="historyGrid">
+          <!-- 비어있을 때의 기본 플레이스홀더 -->
           <div class="history-empty">
             아직 분석된 기록이 없습니다. 사진을 업로드하여 첫 번째 감정 분석을 시작해보세요! 🐾
           </div>
@@ -422,7 +490,9 @@
       </div>
     </section>
 
-    <!-- ================= FAQ Section ================= -->
+    <!-- ------------------------------------------------------------------------
+         FAQ Section: 자주 묻는 질문 코너 (아코디언 형식)
+         ------------------------------------------------------------------------ -->
     <section id="faq" class="section" style="background: var(--bg-secondary);">
       <div class="container">
         <div class="section-header">
@@ -431,7 +501,9 @@
           <p class="section-desc">PawEmotion AI 서비스에 대해 궁금한 점을 확인하세요.</p>
         </div>
 
+        <!-- FAQ 아코디언 컴포넌트 -->
         <div class="faq-accordion">
+          <!-- FAQ 항목 1 (기본 활성화) -->
           <div class="faq-item active">
             <button class="faq-question">
               <span>Q. AI 감정 분석의 정확도는 얼마나 되나요?</span>
@@ -442,6 +514,7 @@
             </div>
           </div>
 
+          <!-- FAQ 항목 2 -->
           <div class="faq-item">
             <button class="faq-question">
               <span>Q. 수의사의 진료나 전문 훈련을 대체할 수 있나요?</span>
@@ -452,6 +525,7 @@
             </div>
           </div>
 
+          <!-- FAQ 항목 3 -->
           <div class="faq-item">
             <button class="faq-question">
               <span>Q. 어떤 사진을 올려야 가장 정확하게 분석되나요?</span>
@@ -462,6 +536,7 @@
             </div>
           </div>
 
+          <!-- FAQ 항목 4 -->
           <div class="faq-item">
             <button class="faq-question">
               <span>Q. 업로드한 반려견 사진은 안전하게 보호되나요?</span>
@@ -472,6 +547,7 @@
             </div>
           </div>
 
+          <!-- FAQ 항목 5 -->
           <div class="faq-item">
             <button class="faq-question">
               <span>Q. 이용 요금이 있나요?</span>
@@ -485,9 +561,12 @@
       </div>
     </section>
 
-    <!-- ================= About Section ================= -->
+    <!-- ------------------------------------------------------------------------
+         About Section: 개발 가치관 및 프로젝트 소개
+         ------------------------------------------------------------------------ -->
     <section id="about" class="section">
       <div class="container">
+        <!-- 2행 그리드 배치 (텍스트 설명 / 우측 비주얼 강조판) -->
         <div class="about-grid">
           <div class="about-text">
             <div class="badge badge-primary">ABOUT PAWEMOTION</div>
@@ -498,6 +577,7 @@
             <p>
               <strong>PawEmotion AI</strong>는 동물응용과학 및 동물행동학의 이론적 기초 위에 최첨단 Vision AI를 접목하여, 보호자가 반려견의 내면 상태를 즉각 이해하고 올바른 교감을 나눌 수 있도록 돕기 위해 개발되었습니다.
             </p>
+            <!-- 서비스 특장점 체크 리스트 -->
             <ul class="feature-list">
               <li class="feature-list-item">
                 <span class="feature-check-icon">✓</span>
@@ -514,6 +594,7 @@
             </ul>
           </div>
 
+          <!-- 우측 강조 배너 박스 -->
           <div class="glass-panel" style="padding: 2.2rem; text-align: center;">
             <div style="font-size: 3.5rem; margin-bottom: 1rem;">🐾 🐶 💖</div>
             <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.8rem;">반려견의 행복한 미소를 지켜주세요</h4>
@@ -527,18 +608,22 @@
     </section>
   </main>
 
-  <!-- ================= Footer ================= -->
+  <!-- ================= [3. 하단 바닥글 영역 (Footer)] ================= -->
+  <!-- footer 태그는 저작권, 약관, 이메일 주소 등 최하단 공통 안내판에 사용하는 시맨틱 태그입니다. -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
+        <!-- 브랜드 정보 -->
         <div class="footer-brand">
           <h4>🐾 PawEmotion AI</h4>
           <p>반려견 사진 기반 AI 감정 분석 및 행동 가이드 웹 서비스</p>
           <div style="margin-top: 1rem;">
+            <!-- 면책 고지 배너: 과도한 오남용을 예방합니다. -->
             <span class="disclaimer-badge">⚠️ 수의학적 진단 및 처방을 대체하지 않습니다.</span>
           </div>
         </div>
 
+        <!-- 서비스 바로가기 링크 그룹 -->
         <div class="footer-links">
           <h5>바로가기</h5>
           <ul>
@@ -550,6 +635,7 @@
           </ul>
         </div>
 
+        <!-- 깃허브 등 개발 리소스 바로가기 링크 그룹 -->
         <div class="footer-links">
           <h5>프로젝트 정보</h5>
           <ul>
@@ -560,6 +646,7 @@
         </div>
       </div>
 
+      <!-- 바닥 하단 안내선 -->
       <div class="footer-bottom">
         <div>© 2026 PawEmotion AI. All rights reserved.</div>
         <div>Built with Vanilla HTML/CSS/JS & Vercel Python Serverless</div>
@@ -567,10 +654,12 @@
     </div>
   </footer>
 
-  <!-- Toast Notification Container -->
+  <!-- [Toast Notification Container: 토스트 알림창 안방] -->
+  <!-- 사진 등록 성공, 에러 발생 시 우측 하단에서 튀어나오는 알림카드들의 집합 공간입니다. -->
   <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
-  <!-- Main JavaScript File -->
+  <!-- [Main JavaScript Link: 메인 프론트엔드 제어용 JS 연동] -->
+  <!-- 모든 HTML DOM 렌더링이 안정적으로 완료된 후 스크립트를 연결하기 위해 body 닫는 태그 직전에 기재합니다. -->
   <script src="js/main.js"></script>
 </body>
 </html>
