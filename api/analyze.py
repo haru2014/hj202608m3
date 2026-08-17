@@ -208,10 +208,9 @@ class handler(BaseHTTPRequestHandler):
             system_instruction, user_prompt_text, breed, age, situation
         )
 
-        # API 호출이 전혀 수행되지 않았을 경우 (데모 모드)
+        # API 호출이 전혀 수행되지 않았을 경우 (API 키 미설정 에러)
         if not api_executed:
-            demo_result = self._generate_heuristic_response(breed, age, situation, error_msg="No API keys")
-            self._send_json_success(demo_result)
+            self._send_json_error(503, "AI API 키가 설정되지 않았습니다. Vercel 환경 변수에 GEMINI_API_KEY 또는 OPENAI_API_KEY를 등록해주세요.")
 
     # 요청 매개변수 유효성 검사 및 정제용 내부 헬퍼 메서드
     def _parse_request_data(self, data):
@@ -236,8 +235,7 @@ class handler(BaseHTTPRequestHandler):
                 import sys
                 sys.stderr.write(f"[Gemini API 호출 에러] {str(e)}\n")
                 if not openai_api_key:
-                    fallback_result = self._generate_heuristic_response(breed, age, situation, error_msg=str(e))
-                    self._send_json_success(fallback_result)
+                    self._send_json_error(502, f"AI API 연결에 실패했습니다. (Gemini 오류: {str(e)}) 잠시 후 다시 시도하거나 API 키 설정을 확인해주세요.")
                     return True
 
         # 2단계: OpenAI API 실행
@@ -249,8 +247,7 @@ class handler(BaseHTTPRequestHandler):
             except Exception as e:
                 import sys
                 sys.stderr.write(f"[OpenAI API 호출 에러] {str(e)}\n")
-                fallback_result = self._generate_heuristic_response(breed, age, situation, error_msg=str(e))
-                self._send_json_success(fallback_result)
+                self._send_json_error(502, f"AI API 연결에 실패했습니다. (OpenAI 오류: {str(e)}) 잠시 후 다시 시도하거나 API 키 설정을 확인해주세요.")
                 return True
 
         return False
@@ -375,151 +372,7 @@ class handler(BaseHTTPRequestHandler):
         result_json["source"] = "OpenAI GPT-4o-mini Vision"
         return result_json
 
-    # API 키가 없거나 API 호출에 실패했을 때 동작하는 대체 분석(Rule-based Heuristic) 함수
-    def _generate_heuristic_response(self, breed, age, situation, error_msg=None):
-        """API 키가 구성되지 않았거나 오프라인 테스트 중에 동작하는 인공지능 대체/데모 분석기"""
-        
-        # 상황(Situation) 텍스트를 모두 소문자로 변환하여 매칭 확률을 높임
-        situation_lower = situation.lower()
-
-        # 0) 화남, 으르렁, 이빨, 공격, 경계 등 분노/경계 신호인 경우 -> '경계(Alert)' 상태로 판정
-        if any(w in situation_lower for w in ['화남', '화', '으르렁', '이빨', '경계', '공격', '물기', '위협', '짖음', '성남']):
-            emotion = "경계"
-            emotion_en = "Alert"
-            emoji = "😠"
-            confidence = 93
-            summary = f"{breed} 친구는 현재 강한 경계심과 방어적 위협 신호(으르렁/이빨 노출 등)를 보이고 있는 상태입니다."
-            cues = [
-                {"part": CUE_EYE, "observation": "시선이 매섭게 고정되어 있고 동공이 확장된 긴장 상태"},
-                {"part": CUE_EAR, "observation": "앞으로 꼿꼿이 세워지거나 뒤로 젖혀져 극도의 긴장감 표출"},
-                {"part": CUE_MOUTH, "observation": "입술을 말아 올려 이빨을 드러내고 낮게 으르렁거리는 경고 신호"},
-                {"part": CUE_BODY, "observation": "체중을 앞으로 싣거나 굳어 있어 언제든 반응할 수 있는 공격/방어 태세"}
-            ]
-            recs = [
-                "즉시 시선 접촉을 피하고, 반려견에게 충분한 안전거리(최소 2~3미터)를 내어주세요.",
-                "큰 소리를 내거나 갑작스러운 손동작을 멈추고 제자리에서 차분하게 기다리세요.",
-                "자극을 주는 대상(낯선 사람, 물건, 다른 동물)을 반려견의 시야에서 치워주세요."
-            ]
-            precautions = [
-                "화가 나 있을 때 억지로 다가가거나 만지려고 하면 물림 사고로 이어질 수 있으니 절대 손을 뻗지 마세요.",
-                "다그치거나 혼내면 공격성이 더욱 심화될 수 있으므로 조용히 환경을 진정시켜야 합니다."
-            ]
-
-        # 1) 산책, 놀이, 간식 등의 쾌활한 단어가 들어간 상황인 경우 -> '놀이(Playful)' 상태로 판정
-        elif any(w in situation_lower for w in ['산책', '놀이', '간식', '공놀이', '달리기']):
-            emotion = "놀이"
-            emotion_en = "Playful"
-            emoji = "🎾"
-            confidence = 91 # 신뢰도 설정 (%)
-            summary = f"{breed} 친구는 현재 넘치는 에너지와 호기심으로 놀이 활동에 완전히 몰입해 있는 상태입니다!"
-            cues = [
-                {"part": CUE_EYE, "observation": "반짝이고 초롱초롱하며 보호자 또는 장난감을 강하게 주시함"},
-                {"part": CUE_EAR, "observation": "전방을 향해 쫑긋 세워져 높은 집중력과 흥분을 나타냄"},
-                {"part": CUE_MOUTH, "observation": "입을 기분 좋게 벌리고 혀를 약간 내밀며 호흡 중"},
-                {"part": CUE_BODY, "observation": "몸에 탄력적인 텐션이 있고 언제든 달려나갈 준비가 된 활발한 자세"}
-            ]
-            recs = [
-                "터그놀이나 터치 놀이 등 신체 및 지능을 자극하는 놀이를 15~20분간 함께 즐겨주세요.",
-                "신나게 놀아준 후에는 차분하게 앉아 기다리는 쿨다운(Cool-down) 시간을 가져주세요.",
-                "충분한 수분 섭취를 돕고 칭찬과 함께 가벼운 간식 보상을 제공하세요."
-            ]
-            precautions = [
-                "과도한 흥분으로 인한 점핑이나 입질 행동이 나타나지 않도록 적절한 템포 조절이 필요합니다.",
-                "관절에 무리가 가지 않도록 미끄럽지 않은 바닥에서 놀이를 진행해주세요."
-            ]
-            
-        # 2) 병원, 낯선 자극, 소음 등 위협을 느낄 수 있는 상황인 경우 -> '불안(Anxious)' 상태로 판정
-        elif any(w in situation_lower for w in ['병원', '낯선', '천둥', '소음', '목욕', '주사']):
-            emotion = "불안"
-            emotion_en = "Anxious"
-            emoji = "😟"
-            confidence = 86
-            summary = f"낯선 자극이나 환경({situation})으로 인해 가벼운 긴장과 불안 신호가 관찰됩니다."
-            cues = [
-                {"part": CUE_EYE, "observation": "눈을 크게 뜨고 흰자위(고래 눈 신호)가 살짝 보이거나 시선을 회피함"},
-                {"part": CUE_EAR, "observation": "귀가 뒤쪽으로 살짝 눕혀져 경계 및 긴장 상태를 표현"},
-                {"part": CUE_MOUTH, "observation": "입을 꽉 다물고 있거나 코를 자주 날름거리는 핥기 행동(카밍 시그널)"},
-                {"part": CUE_BODY, "observation": "무게중심을 낮추고 몸이 약간 경직되어 방어적 태세를 취함"}
-            ]
-            recs = [
-                "반려견을 다그치지 말고 보호자의 차분하고 낮은 목소리로 안정을 유도하세요.",
-                "억지로 만지거나 눈을 정면으로 빤히 응시하지 말고, 충분한 안전거리를 확보해주세요.",
-                "평소 좋아하는 부드러운 담요나 애착 인형을 제공하여 심리적 안정감을 심어주세요."
-            ]
-            precautions = [
-                "갑작스러운 신체 접촉이나 큰 동작은 반려견을 놀라게 할 수 있으니 피하세요.",
-                "불안이 지속되거나 떨림 증상이 심해지면 조용한 독립 공간으로 이동해 휴식을 취하게 하세요."
-            ]
-            
-        # 3) 잠, 휴식, 침대 등 이완되고 아늑한 상황인 경우 -> '편안함(Relaxed)' 상태로 판정
-        elif any(w in situation_lower for w in ['잠', '휴식', '침대', '소파', '낮잠', '쿠션']):
-            emotion = "편안함"
-            emotion_en = "Relaxed"
-            emoji = "😌"
-            confidence = 94
-            summary = "보호자와의 신뢰 속에서 매우 편안하고 안정적인 심리 상태를 유지하고 있습니다."
-            cues = [
-                {"part": CUE_EYE, "observation": "눈꺼풀이 부드럽게 풀려있고 눈빛이 그윽하며 온화함"},
-                {"part": CUE_EAR, "observation": "품종 고유의 자연스럽고 힘이 빠진 중립적인 귀 위치"},
-                {"part": CUE_MOUTH, "observation": "턱의 힘이 빠져 입이 살짝 벌어져 있거나 편안히 다문 상태"},
-                {"part": CUE_BODY, "observation": "전신의 근육이 이완되어 옆으로 눕거나 편하게 기대어 쉼"}
-            ]
-            recs = [
-                "편안한 휴식을 방해하지 않고 조용하고 아늑한 실내 온도를 유지해주세요.",
-                "부드러운 스킨십(가슴이나 귀 뒤쪽 마사지)을 통해 유대감을 더욱 깊게 형성해보세요.",
-                "안락한 수면 환경을 위해 은은한 조명과 적절한 습도를 유지해주세요."
-            ]
-            precautions = [
-                "깊은 수면 중일 때 갑자기 만지면 방어 반응으로 놀랄 수 있으니 천천히 다가가세요.",
-                "편안한 상태를 오래 지속할 수 있도록 주변의 급작스러운 소음을 최소화해주세요."
-            ]
-            
-        # 4) 그 외의 모든 일상적인 기본 상황 -> '행복(Happy)' 상태로 판정
-        else:
-            emotion = "행복"
-            emotion_en = "Happy"
-            emoji = "😊"
-            confidence = 92
-            summary = f"{breed} 친구는 현재 매우 긍정적이고 만족스러운 행복감을 느끼고 있는 것으로 분석됩니다."
-            cues = [
-                {"part": CUE_EYE, "observation": "눈가에 긴장감이 전혀 없고 따뜻하고 부드러운 표정"},
-                {"part": CUE_EAR, "observation": "앞으로 편안하게 펼쳐져 친근감과 호의를 표출함"},
-                {"part": CUE_MOUTH, "observation": "미소를 짓는 듯 입꼬리가 살짝 올라가며 입이 편안하게 열림"},
-                {"part": CUE_BODY, "observation": "온몸에 긴장이 없고 꼬리를 가볍게 흔들며 친밀함을 나타냄"}
-            ]
-            recs = [
-                "다정한 음성으로 칭찬해 주며 반려견과의 긍정적인 상호작용을 이어가세요.",
-                "가벼운 산책이나 후각 활동(노즈워크)으로 행복감을 더욱 증진시켜 주세요.",
-                "스킨십을 나누며 교감을 극대화하고 유대감을 강화하세요."
-            ]
-            precautions = [
-                "지속적으로 긍정적인 일상을 유지할 수 있도록 규칙적인 산책과 식사 루틴을 지켜주세요.",
-                "반려견의 기분 좋은 시그널을 기록하여 어떤 활동을 가장 선호하는지 파악해보세요."
-            ]
-
-        # 응답 정보 출처 텍스트 설정
-        source_info = "PawEmotion AI 동물행동학 분석 엔진 (체험/데모 모드)"
-        if error_msg:
-            # API 키 미입력이나 오류 발생 시 UI에 가이드를 추가 노출시킴
-            source_info += " [OpenAI API 연동 안내: 환경변수 OPENAI_API_KEY 설정 시 실시간 Vision 분석 활성화]"
-
-        # 최종 프론트엔드로 전달할 표준화된 데이터 구조 반환
-        return {
-            "emotion": emotion,
-            "emotion_en": emotion_en,
-            "emoji": emoji,
-            "confidence": confidence,
-            "summary": summary,
-            "cues": cues,
-            "recommendations": recs,
-            "precautions": precautions,
-            "source": source_info,
-            "meta": {
-                "breed": breed,
-                "age": age,
-                "situation": situation
-            }
-        }
+    # (제거됨) _generate_heuristic_response: API 연결 실패 시 가짜 분석 결과 대신 에러 응답을 반환하도록 변경됨
 
     # 성공적인 JSON 응답 전송 도우미 메서드 (200 OK 상태 코드 전달)
     def _send_json_success(self, data):

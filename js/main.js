@@ -344,9 +344,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         data = await response.json();
       } catch (fetchErr) {
-        console.warn('Backend API request unreached or timed out, activating intelligent client-side analyzer...', fetchErr);
-        // 백엔드 API 서버를 사용할 수 없거나 시간 초과 시 클라이언트 자체 휴리스틱 알고리즘으로 대체(Fallback) 작동
-        data = simulateClientAnalysis(breed, age, situation);
+        console.error('Backend API connection failed:', fetchErr);
+        // API 연결 실패 시 사용자에게 명확한 에러 메시지를 표시합니다.
+        let errorMsg = 'AI API 서버에 연결할 수 없습니다.';
+        if (fetchErr.name === 'AbortError') {
+          errorMsg = 'AI 분석 요청이 시간 초과(30초)되었습니다. 네트워크 연결을 확인하고 다시 시도해주세요.';
+        } else if (!navigator.onLine) {
+          errorMsg = '인터넷 연결이 끊어져 있습니다. 네트워크 연결을 확인해주세요.';
+        } else {
+          errorMsg = 'AI API 서버에 연결할 수 없습니다. 잠시 후 다시 시도하거나, 배포 환경의 API 설정을 확인해주세요.';
+        }
+        throw new Error(errorMsg);
       }
 
       latestAnalysisResult = data;
@@ -443,95 +451,10 @@ document.addEventListener('DOMContentLoaded', () => {
     resSourceInfo.textContent = data.source ? `분석 출처: ${data.source}` : 'PawEmotion AI 동물행동학 분석 모델';
   };
 
-  // ================= 9. 클라이언트 대체 분석 엔진 (Client Fallback Heuristic) =================
-  // 백엔드가 비활성화되어 있거나 서버 점검 중일 때, 텍스트(상황, 품종) 매칭을 통해 적절한 시그널 및 맞춤 가이드를 돌려주는 장치
-  const simulateClientAnalysis = (breed, age, situation) => {
-    const sit = situation.toLowerCase();
+  // ================= 9. (제거됨) 클라이언트 대체 분석 엔진 =================
+  // API 연결 실패 시 가짜 분석 결과 대신 명확한 에러 메시지를 표시하도록 변경되었습니다.
+  // 이전의 simulateClientAnalysis 함수는 제거되었습니다.
 
-    // 기본값 설정 (Happy)
-    let emotion = "행복", emotion_en = "Happy", emoji = "😊", conf = 92;
-    let summary = `${breed} 친구는 현재 보호자와의 일상 속에서 편안하고 즐거운 행복감을 느끼고 있습니다.`;
-    let cues = [
-      { part: "눈", observation: "눈매가 부드럽고 눈 깜빡임이 자연스러워 이완된 상태" },
-      { part: "귀", observation: "품종 고유의 자연스러운 각도로 앞으로 향함" },
-      { part: "입 및 혀", observation: "입꼬리가 살짝 올라가며 부드럽게 열려 있음" },
-      { part: "몸 및 자세", observation: "신체 근육이 이완되어 있고 꼬리가 부드러운 중립 위치" }
-    ];
-    let recs = [
-      "다정한 목소리로 교감하며 반려견의 행복한 기분을 북돋아주세요.",
-      "간단한 간식 노즈워크나 산책으로 긍정적인 경험을 이어가세요.",
-      "충분한 애정 표현과 턱/가슴 부위의 부드러운 스킨십을 선물하세요."
-    ];
-    let precs = [
-      "현재의 안정된 환경과 루틴을 꾸준히 유지해 주는 것이 좋습니다.",
-      "갑작스러운 큰 소음이나 낯선 자극의 유입을 최소화해주세요."
-    ];
-
-    // 조건부 텍스트 매칭: 화남/경계/공격이 감지되면 경계 상태 반환
-    if (['화남', '화', '으르렁', '이빨', '경계', '공격', '물기', '위협', '짖음', '성남'].some(w => sit.includes(w))) {
-      emotion = "경계"; emotion_en = "Alert"; emoji = "😠"; conf = 93;
-      summary = `${breed} 친구는 현재 강한 경계심과 방어적 위협 신호(으르렁/이빨 노출 등)를 보이고 있는 상태입니다.`;
-      cues = [
-        { part: "눈", observation: "시선이 매섭게 고정되어 있고 동공이 확장된 긴장 상태" },
-        { part: "귀", observation: "앞으로 꼿꼿이 세워지거나 뒤로 젖혀져 극도의 긴장감 표출" },
-        { part: "입 및 혀", observation: "입술을 말아 올려 이빨을 드러내고 낮게 으르렁거리는 경고 신호" },
-        { part: "몸 및 자세", observation: "체중을 앞으로 싣거나 굳어 있어 언제든 반응할 수 있는 공격/방어 태세" }
-      ];
-      recs = [
-        "즉시 시선 접촉을 피하고, 반려견에게 충분한 안전거리(최소 2~3미터)를 내어주세요.",
-        "큰 소리를 내거나 갑작스러운 손동작을 멈추고 제자리에서 차분하게 기다리세요.",
-        "자극을 주는 대상(낯선 사람, 물건, 다른 동물)을 반려견의 시야에서 치워주세요."
-      ];
-      precs = [
-        "화가 나 있을 때 억지로 다가가거나 만지려고 하면 물림 사고로 이어질 수 있으니 절대 손을 뻗지 마세요.",
-        "다그치거나 혼내면 공격성이 더욱 심화될 수 있으므로 조용히 환경을 진정시켜야 합니다."
-      ];
-    // 조건부 텍스트 매칭: 병원/소음이 감지되면 불안 상태 반환
-    } else if (sit.includes('병원') || sit.includes('낯선') || sit.includes('소음') || sit.includes('천둥')) {
-      emotion = "불안"; emotion_en = "Anxious"; emoji = "😟"; conf = 88;
-      summary = `낯선 자극이나 환경(${situation})으로 인해 일시적인 긴장과 불안 신호가 감지됩니다.`;
-      cues = [
-        { part: "눈", observation: "시선이 고정되지 않고 두리번거리거나 흰자위가 살짝 보임" },
-        { part: "귀", observation: "귀가 뒤쪽으로 살짝 젖혀져 방어적인 모습" },
-        { part: "입 및 혀", observation: "입을 굳게 다물거나 입술을 자주 핥는 카밍 시그널" },
-        { part: "몸 및 자세", observation: "무게중심을 낮추고 몸에 미세한 긴장감이 있음" }
-      ];
-      recs = [
-        "보호자의 차분하고 일관된 태도로 심리적 안정감을 심어주세요.",
-        "불안을 유발하는 자극원으로부터 적절한 안전거리를 유지해주세요.",
-        "좋아하는 간식이나 애착 물품으로 시선을 부드럽게 분산시키세요."
-      ];
-      precs = [
-        "불안해할 때 억지로 안거나 과도하게 쓰다듬으면 긴장이 가중될 수 있습니다.",
-        "강요하지 말고 반려견이 스스로 안정을 찾을 때까지 충분한 시간을 주세요."
-      ];
-      // 놀이/산책이 감지되면 흥분/놀이 상태 반환
-    } else if (sit.includes('놀이') || sit.includes('산책') || sit.includes('공') || sit.includes('터그')) {
-      emotion = "놀이"; emotion_en = "Playful"; emoji = "🎾"; conf = 95;
-      summary = `${breed} 친구는 활력과 호기심이 최고조에 달해 신나는 놀이 활동에 푹 빠져 있습니다!`;
-      cues = [
-        { part: "눈", observation: "초롱초롱 빛나며 움직이는 대상에 시선이 즉각 반응함" },
-        { part: "귀", observation: "앞을 향해 쫑긋 세워져 높은 집중력과 기대를 표출" },
-        { part: "입 및 혀", observation: "혀를 내밀고 기분 좋게 헐떡이며 활짝 웃는 표정" },
-        { part: "몸 및 자세", observation: "상체를 낮추고 엉덩이를 드는 플레이 보우 자세" }
-      ];
-      recs = [
-        "터그 놀이나 공 던지기 등 신나는 인터랙티브 놀이를 15~20분간 즐겨주세요.",
-        "놀이 중간중간 물을 마실 수 있도록 시원한 음수를 챙겨주세요.",
-        "놀이가 끝난 후에는 '앉아'나 '기다려'를 통해 차분하게 마무리하세요."
-      ];
-      precs = [
-        "과도한 흥분으로 인한 흥분성 입질이 생기지 않도록 놀이 템포를 조절하세요.",
-        "미끄러운 실내 바닥에서는 관절 부상을 방지하기 위해 매트를 활용하세요."
-      ];
-    }
-
-    return {
-      emotion, emotion_en, emoji, confidence: conf, summary, cues,
-      recommendations: recs, precautions: precs,
-      source: "PawEmotion AI 오프라인/로컬 동물행동학 엔진"
-    };
-  };
 
   // ================= 10. 결과 텍스트 클립보드 복사 (Copy Result) =================
   // 클라이언트의 clipboard API를 활용해 결과를 정제된 텍스트 폼으로 복사
